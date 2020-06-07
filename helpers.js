@@ -2,10 +2,14 @@ const MongoClient = require('mongodb').MongoClient;
 
 const jwt = require('jsonwebtoken');
 
-let connection = null;
-
+// private key for create jwt
 const privateKey = 'secret';
 
+let connection = null;
+/**
+ * @name getMongoClient
+ * @description return connection for mongo client.
+ */
 function getMongoClient() {
 	return new Promise((resolve, reject) => {
 		const url = 'mongodb://localhost:27017';
@@ -21,6 +25,13 @@ function getMongoClient() {
 	});
 }
 
+/**
+ * @name createToken
+ * @description create token from object
+ * @param {Object} data object to create jwt
+ * @return {Promise} with token
+ *
+ */
 function createToken(data) {
 	return new Promise((resolve, reject) => {
 		jwt.sign(data, privateKey, function (err, token) {
@@ -30,9 +41,14 @@ function createToken(data) {
 	});
 }
 
+/**
+ * @name verifyToken
+ * @description verify token , return error if token not valid
+ * @param {string} token token to verify
+ * @return {Promise} decoded object
+ */
 function verifyToken(token) {
 	return new Promise((resolve, reject) => {
-		// invalid token
 		jwt.verify(token, privateKey, function (err, decoded) {
 			if (err) return reject(err);
 			return resolve(decoded);
