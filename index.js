@@ -5,11 +5,20 @@ const http = require('http');
 const express = require('express');
 const mongoClient = require('mongodb');
 
+const cors = require('cors');
+
+const productRouter = require('./routes/products');
+
 // setup express app (handle app routing)
 const app = express();
 
+app.use(cors());
+
 // parse request body (json) middleware
 app.use(express.json());
+
+// register routes
+app.use('/products', productRouter);
 
 // helper functions
 const { getMongoClient, createToken, verifyToken } = require('./helpers');
