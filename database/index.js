@@ -4,11 +4,10 @@ async function getProducts() {
 	try {
 		const mongoClient = await getMongoClient();
 		// define users collection
-		collection = mongoClient.db('rentme').collection('products');
+		collection = mongoClient.db('rentme').collection('itemsByCategory');
 
 		// find user by email in usres collection
 		const products = await collection.find({}).toArray();
-
 		return products;
 	} catch (error) {}
 }

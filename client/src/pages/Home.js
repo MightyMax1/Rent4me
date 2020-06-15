@@ -31,17 +31,36 @@ function Home(props) {
 				<button onClick={onClick}>search {counter}</button>
 			</div>
 
-			<div className="categories"></div>
+			<div className="categories" style={{ display: 'flex', flexWrap: 'wrap ', width: '70%', margin: 'auto' }}>
+				{
+					products.map((categoryObj, i) => {
+						return (
+							<div key={i} >
+								<h5>{categoryObj['category']}</h5>
+								<img src='https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-image-512.png' width="150" height="200" />
+							</div>
+						);
+					})
+				}
+			</div>
 			<div className="trending"></div>
 			<div className="newest">
-				{products.map((item, i) => {
-					return (
-						<div key={i}>
-							<h2>{item.title}</h2>
-							<img src={item.img} alt="car" />
-						</div>
-					);
-				})}
+				{
+					products.map((categoryObj, i) => {
+						return (
+							categoryObj['items'].map((item, i) => {
+								return (
+									<div key={i}>
+										<h6>title:{item.title}</h6>
+										<img src={item.mainImg} width="150" height="200" />
+									</div>
+
+								);
+							})
+
+						);
+					})
+				}
 			</div>
 		</div>
 	);
