@@ -4,13 +4,15 @@ async function getProducts() {
 	try {
 		const mongoClient = await getMongoClient();
 		// define users collection
-		collection = mongoClient.db('rentme').collection('products');
+		collection_items = mongoClient.db('rentme').collection('items');
+		collection_categories = mongoClient.db('rentme').collection('categories');
 
-		// find user by email in usres collection
-		const products = await collection.find({}).toArray();
+		// find all products & categories
+		const products = await collection_items.find({}).toArray();
+		const categories = await collection_categories.find({}).toArray();
 
-		return products;
-	} catch (error) {}
+		return { categories, products };
+	} catch (error) { }
 }
 
 module.exports = { getProducts };
