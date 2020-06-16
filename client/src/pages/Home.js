@@ -33,11 +33,11 @@ function Home(props) {
 
 			<div className="categories" style={{ display: 'flex', flexWrap: 'wrap ', width: '70%', margin: 'auto' }}>
 				{
-					products.map((categoryObj, i) => {
+					products['categories'].map((category, i) => {
 						return (
 							<div key={i} >
-								<h5>{categoryObj['category']}</h5>
-								<img src='https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-image-512.png' width="150" height="200" />
+								<h5>{category.name}</h5>
+								<img src={category.img} width="150" height="200" />
 							</div>
 						);
 					})
@@ -46,17 +46,12 @@ function Home(props) {
 			<div className="trending"></div>
 			<div className="newest">
 				{
-					products.map((categoryObj, i) => {
+					products["products"].map((product, i) => {
 						return (
-							categoryObj['items'].map((item, i) => {
-								return (
-									<div key={i}>
-										<h6>title:{item.title}</h6>
-										<img src={item.mainImg} width="150" height="200" />
-									</div>
-
-								);
-							})
+							<div key={i}>
+								<h6>title:{product.title}</h6>
+								<img src={product.mainImg} width="150" height="200" />
+							</div>
 
 						);
 					})
