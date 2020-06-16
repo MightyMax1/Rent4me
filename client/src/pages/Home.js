@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 function Home(props) {
 	const [counter, setCounter] = useState(0);
 	let [products, setProducts] = useState([]);
+	let [categories, setCategories] = useState([]);
 
 	function onClick() {
 		console.log('clicked');
@@ -18,11 +19,15 @@ function Home(props) {
 			const data = await res.json();
 
 			console.log('data', data);
-			setProducts(data);
+			setProducts(data.products);
+			setCategories(data.categories);
 		}
 
 		getProducts(); // function call
 	}, []);
+
+	console.log('categories', categories);
+	console.log('products', products);
 
 	return (
 		<div>
@@ -33,7 +38,7 @@ function Home(props) {
 
 			<div className="categories" style={{ display: 'flex', flexWrap: 'wrap ', width: '70%', margin: 'auto' }}>
 				{
-					products['categories'].map((category, i) => {
+					categories.map((category, i) => {
 						return (
 							<div key={i} >
 								<h5>{category.name}</h5>
@@ -46,7 +51,7 @@ function Home(props) {
 			<div className="trending"></div>
 			<div className="newest">
 				{
-					products["products"].map((product, i) => {
+					products.map((product, i) => {
 						return (
 							<div key={i}>
 								<h6>title:{product.title}</h6>

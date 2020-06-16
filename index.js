@@ -15,7 +15,7 @@ const app = express();
 app.use(cors());
 
 // parse request body (json) middleware
-app.use(express.json());
+app.use(express.json({ limit: '1MB' }));
 
 // register routes
 app.use('/products', productRouter);
