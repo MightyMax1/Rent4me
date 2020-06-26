@@ -15,11 +15,11 @@ function Home(props) {
 		console.log('useEffect');
 
 		async function getProducts() {
-			const res = await fetch('http://localhost:4000/products');
+			const res = await fetch('http://localhost:4000/products/homePage');
 			const data = await res.json();
 
 			console.log('data', data);
-			setProducts(data.products);
+			setProducts(data.newProducts);
 			setCategories(data.categories);
 		}
 

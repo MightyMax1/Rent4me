@@ -8,11 +8,14 @@ async function getProducts() {
 		collection_categories = mongoClient.db('rentme').collection('categories');
 
 		// find all products & categories,
-		const products = await collection_items.find({}).toArray();
+		const newProducts = await collection_items.find({}).sort({ createdAt: -1 }).limit(4).toArray();
+
+		// toDO.... const trendProducts = ...
+
 		const categories = await collection_categories.find({}).toArray();
 
-		return { categories, products };
-	} catch (error) {}
+		return { categories, newProducts };
+	} catch (error) { }
 }
 
 async function AddProduct(product) {
