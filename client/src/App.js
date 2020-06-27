@@ -6,7 +6,7 @@ import './App.css';
 import { Route } from 'react-router-dom';
 
 // import component
-import Navbar from './componets/Navbar';
+import MainNavbar from './componets/MainNavbar';
 
 import Home from './pages/Home';
 import AddItem from './pages/AddItem';
@@ -22,7 +22,7 @@ function Help(props) {
 function App() {
 	return (
 		<div className="App">
-			<Navbar />
+			<MainNavbar />
 			<div>
 				<Route exact path="/" component={Home} />
 				<Route exact path="/addItem" component={AddItem} />
