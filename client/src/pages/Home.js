@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Button, Container, Row, CardDeck, CardGroup, Col } from 'react-bootstrap'
+import { Card, Button, Container, Row, CardDeck, CardGroup, Col, Badge } from 'react-bootstrap'
 
 
 function Home(props) {
@@ -32,20 +32,21 @@ function Home(props) {
 	console.log('products', products);
 
 	return (
-		<React.Fragment>
-			<div className="search">
+		<Container >
+			<Container className="search">
 				<input type="text" />
 				<button onClick={onClick}>search {counter}</button>
-			</div>
-
+			</Container>
 			<Container className="categories" >
-				<h3>קטגוריות  מוצרים</h3>
+				<Row style={{ marginTop: "3%" }}>
+					<Badge as={Col} variant="dark" style={{ fontSize: "medium" }}>קטגוריות</Badge>
+				</Row>
 				<Row>
 					{
 						categories.map((category, i) => {
 							return (
-								< Card as={Col} md={3} sm={2} xl={3} style={{ width: '8rem' }}>
-									<Card.Img variant="top" src={category.img} />
+								< Card as={Col} xl={3} md={3} sm={6} xs={6}>
+									<Card.Img variant="top" src={category.img} style={{ maxWidth: "300px" }} />
 									<Card.Footer>
 										<small className="text-muted">{category.name}</small>
 									</Card.Footer>
@@ -57,27 +58,31 @@ function Home(props) {
 			</Container>
 			<Container className="trending"></Container>
 			<Container className="newest">
-				<h3>מוצרים חדשים</h3>
-				<CardGroup>
+				<Row style={{ marginTop: "3%" }}>
+					<Badge as={Col} variant="dark" style={{ fontSize: "medium" }}>מוצרים חדשים</Badge>
+				</Row>
+				<CardGroup as={Row} >
 					{
 						products.map((product, i) => {
 							return (
-								< Card key={i} style={{ width: '5rem' }}>
-									<Card.Img variant="top" src={product.mainImg} />
-									<Card.Body>
-										<Card.Title>{product.title}</Card.Title>
-									</Card.Body>
-									<Card.Footer>
-										<small className="text-muted"> 27/06/2020 16:35</small>
-									</Card.Footer>
-								</Card>
+								<Col xl={3} md={3} sm={6} xs={6}>
+									<Card key={i} >
+										<Card.Img variant="top" src={product.mainImg} />
+										<Card.Body>
+											<Card.Title>{product.title}</Card.Title>
+										</Card.Body>
+										<Card.Footer>
+											<small className="text-muted"> 27/06/2020 16:35</small>
+										</Card.Footer>
+									</Card>
+								</Col>
 							);
 						})
 
 					}
 				</CardGroup>
 			</Container>
-		</React.Fragment>
+		</Container>
 
 	);
 }
