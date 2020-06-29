@@ -13,14 +13,18 @@ function MainNavbar(props) {
 	const handleShow = () => setShow(true);
 
 	return (
-		<Navbar sticky="top" bg="light" expand="lg">
+		<Navbar sticky="top" bg="light" expand="md">
 			<Col xl={2} md={2} sm={2} xs={2}>
 				<Navbar.Brand as={Link} to="/">
-					תשכיר לי
+					<img
+						src="/logo1.png"
+						width="45"
+						height="45"
+						className="d-inline-block align-top"
+					/>
 				</Navbar.Brand>
 			</Col>
-
-			<Col xl={{ span: 5, offset: 5 }} md={{ span: 4, offset: 6 }} sm={{ span: 2, offset: 8 }} xs={{ span: 3, offset: 7 }}>
+			<Col xl={{ span: 4, offset: 6 }} md={{ span: 5, offset: 5 }} sm={{ span: 2, offset: 8 }} xs={{ span: 3, offset: 7 }}>
 				<Navbar.Toggle aria-controls="basic-navbar-nav" />
 				<Navbar.Collapse id="basic-navbar-nav ">
 					<Nav dir="rtl" className="mr-auto" >
