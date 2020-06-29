@@ -5,7 +5,7 @@ const db = require('../database');
 const { verifyToken } = require('../helpers');
 
 // get products
-router.get('/', async (req, res) => {
+router.get('/homePage', async (req, res) => {
 	try {
 		// call db function for get products
 		const products = await db.getProducts();
