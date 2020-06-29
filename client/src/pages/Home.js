@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Button, Container, Row, CardDeck, CardGroup, Col, Badge } from 'react-bootstrap'
+import { Card, Button, Container, Row, CardDeck, CardGroup, Col, Badge, Form } from 'react-bootstrap'
 
 
 function Home(props) {
@@ -33,13 +33,23 @@ function Home(props) {
 
 	return (
 		<Container >
-			<Container className="search">
-				<input type="text" />
-				<button onClick={onClick}>search {counter}</button>
+			<Container className="search " style={{
+				marginTop: "1%"
+			}}>
+				< Form >
+					<Form.Row className="align-middle" >
+						<Col xl={{ span: 6, offset: 2 }} md={{ span: 6, offset: 2 }} sm={{ span: 6, offset: 2 }} xs={{ span: 6, offset: 2 }}>
+							<Form.Control name="freeSearch" type="text" size={"sm"} dir="rtl" placeholder="חיפוש חופשי" />
+						</Col>
+						<Col>
+							<Button size={"sm"} onClick={onClick}>חפש {counter}</Button>
+						</Col>
+					</Form.Row>
+				</Form>
 			</Container>
 			<Container className="categories" >
-				<Row style={{ marginTop: "3%" }}>
-					<Badge as={Col} variant="dark" style={{ fontSize: "medium" }}>קטגוריות</Badge>
+				<Row style={{ marginTop: "1%" }}>
+					<Badge as={Col} variant="dark" className={"text-center"} style={{ fontSize: "medium" }} >קטגוריות</Badge>
 				</Row>
 				<Row>
 					{
@@ -47,7 +57,7 @@ function Home(props) {
 							return (
 								< Card as={Col} xl={3} md={3} sm={6} xs={6}>
 									<Card.Img variant="top" src={category.img} style={{ maxWidth: "300px" }} />
-									<Card.Footer>
+									<Card.Footer className="text-center">
 										<small className="text-muted">{category.name}</small>
 									</Card.Footer>
 								</Card>
@@ -71,7 +81,7 @@ function Home(props) {
 										<Card.Body>
 											<Card.Title>{product.title}</Card.Title>
 										</Card.Body>
-										<Card.Footer>
+										<Card.Footer className="text-center">
 											<small className="text-muted"> 27/06/2020 16:35</small>
 										</Card.Footer>
 									</Card>
@@ -82,7 +92,7 @@ function Home(props) {
 					}
 				</CardGroup>
 			</Container>
-		</Container>
+		</Container >
 
 	);
 }
