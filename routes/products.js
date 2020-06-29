@@ -8,10 +8,10 @@ const { verifyToken } = require('../helpers');
 router.get('/homePage', async (req, res) => {
 	try {
 		// call db function for get products
-		const products = await db.getProducts();
+		const ProductsAndCategories = await db.getProductsAndCategories();
 
 		// return response with products
-		res.json(products);
+		res.json(ProductsAndCategories);
 	} catch (err) {
 		console.log('get products err: ', err.message);
 		res.status(500).json({
@@ -19,6 +19,23 @@ router.get('/homePage', async (req, res) => {
 		});
 	}
 });
+
+router.get('/categories', async (req, res) => {
+	try {
+		// call db function for get categories
+		const categories = await db.getCategories();
+
+		// return response with products
+		res.json(categories);
+	} catch (err) {
+		console.log('get products err: ', err.message);
+		res.status(500).json({
+			err: err.message,
+		});
+	}
+});
+
+
 
 // add product
 router.post('/', async (req, res) => {

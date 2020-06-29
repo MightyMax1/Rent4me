@@ -1,6 +1,6 @@
 const { getMongoClient } = require('../helpers');
 
-async function getProducts() {
+async function getProductsAndCategories() {
 	try {
 		const mongoClient = await getMongoClient();
 		// define users collection
@@ -17,6 +17,21 @@ async function getProducts() {
 		return { categories, newProducts };
 	} catch (error) { }
 }
+
+async function getCategories() {
+	try {
+		const mongoClient = await getMongoClient();
+		// define users collection
+		collection_categories = mongoClient.db('rentme').collection('categories');
+
+		// find all categories,
+		const categories = await collection_categories.find({}).toArray();
+
+		return { categories };
+	} catch (error) { }
+}
+
+
 
 async function AddProduct(product) {
 	try {
@@ -35,4 +50,4 @@ async function AddProduct(product) {
 	}
 }
 
-module.exports = { getProducts, AddProduct };
+module.exports = { getProductsAndCategories, AddProduct, getCategories };

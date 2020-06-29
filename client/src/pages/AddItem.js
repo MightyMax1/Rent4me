@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 // history hook for use browser history api
 import { useHistory } from 'react-router-dom';
@@ -15,9 +15,28 @@ const toBase64 = file =>
 	});
 
 function AddItem() {
-	const [form, setForm] = useState({});
+	//add creation time of item
+	//time format "dd/mm/yyyy"
+	const currentDate = Intl.DateTimeFormat('en-GB').format(Date.now());
+	const [form, setForm] = useState({ ['createdAt']: currentDate });
+	const [categories, setCategories] = useState([]);
+
 	// create history instance
 	const history = useHistory();
+
+	useEffect(() => {
+		async function getCategories() {
+			const res = await fetch('http://localhost:4000/products/categories');
+			const data = await res.json();
+
+			console.log('data', data);
+			setCategories(data.categories);
+		}
+		getCategories(); // function call
+	}, []);
+
+
+
 
 	// on form change callback
 	async function onChange(event) {
@@ -26,6 +45,7 @@ function AddItem() {
 
 		// handle change for input name images
 		if (name == 'images') {
+			const showImgSection = document.querySelector("#imagesPreviwTitle");
 			const newImages = [];
 			if (files) {
 				// for every file that user upload, convert it to base64
@@ -33,11 +53,12 @@ function AddItem() {
 					const res = await toBase64(image);
 					newImages.push(res);
 				}
+				//show title on image preview
+				showImgSection.classList.remove("invisible")
 			}
 			// update state with new files of base64
 			return setForm({ ...form, [name]: newImages });
 		}
-
 		// other inputs handler
 		setForm({ ...form, [name]: value });
 	}
@@ -56,9 +77,7 @@ function AddItem() {
 					'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im15ZW1haWwiLCJpYXQiOjE1OTIzMTY4OTB9.Al1XPGmfzjZOELnKigIPBFNEZ0Nbfi3_J2iNLUFADNM',
 			},
 		});
-
 		const data = await res.json();
-
 		console.log('data', data);
 
 		// use history instance for redirect to private page
@@ -69,7 +88,7 @@ function AddItem() {
 	return (
 		<Container >
 			<form dir="rtl" className="form" onChange={onChange} onSubmit={onSubmit} >
-				<Container fluid={true} style={{ maxWidth: "430px", }} >
+				<Container fluid={true} className={"border-right border-left px-5"} style={{ maxWidth: "430px", }} >
 					<FormGroup as={Row} className="title">
 						<FormLabel  >
 							כותרת:
@@ -80,14 +99,14 @@ function AddItem() {
 						<FormLabel>
 							תיאור מוצר:
 					</FormLabel>
-						<Form.Control size="sm" type="text" name="description" placeholder="הכנס תיאור מוצר" />
+						<Form.Control as="textarea" name="description" rows="3" placeholder="הכנס תיאור מוצר" />
 					</FormGroup>
 					<FormGroup as={Row} className="category">
 						<FormLabel>קטגוריה</FormLabel>
-						<Form.Control size="sm" as="select" name="category" id="">
-							<option value="1">itme</option>
-							<option value="2">itme</option>
-							<option value="3">itme</option>
+						<Form.Control size="sm" as="select" name="category" >
+							{categories.map((cat) => {
+								return <option value={cat._id}>{cat.name}</option>
+							})}
 						</Form.Control>
 					</FormGroup>
 					<Form.Row xl={12}>
@@ -112,19 +131,24 @@ function AddItem() {
 					</FormGroup>
 					<Button type="submit" variant="primary" size="md" block>הוסף מוצר</Button>
 				</Container>
-			</form>
-			<Row className="imagesPreviw">
-				{form.images &&
-					form.images.map((img, i) => {
-						return (
-							<FormGroup as={Col}>
-								<Form.Check />
-								<Image width="170" height="180" key={i} src={img} alt="prev" rounded />
-							</FormGroup>
+				<Container>
+					<p as={Row} className="text-muted text-center invisible " id="imagesPreviwTitle">בחר תמונה ראשית</p>
+					<Row className="imagesPreviw" >
+						{form.images &&
+							form.images.map((img, i) => {
+								return (
+									<FormGroup key={i} as={Col} xl={3} md={3} sm={6} xs={6}>
+										<Form.Check type="radio" name="mainImg" value={img} />
+										<Image width="170" height="180" src={img} alt="prev" rounded />
+									</FormGroup>
+								);
+							})}
+					</Row>
+				</Container>
 
-						);
-					})}
-			</Row>
+
+			</form>
+
 		</Container>
 
 	);
