@@ -3,8 +3,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';//?
-import 'bootstrap/dist/css/bootstrap.css';// react-bootstrap css 
-
+import 'bootstrap/dist/css/bootstrap.min.css';// react-bootstrap css 
 // BrowserRouter listen to url change, and re-render Route components
 import { BrowserRouter } from 'react-router-dom';
 
