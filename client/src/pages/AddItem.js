@@ -87,23 +87,24 @@ function AddItem() {
 	console.log('form', form);
 	return (
 		<Container >
-			<form dir="rtl" className="form" onChange={onChange} onSubmit={onSubmit} >
+			<form onChange={onChange} onSubmit={onSubmit} dir="rtl"  >
 				<Container fluid={true} className={"border-right border-left px-5"} style={{ maxWidth: "430px", }} >
-					<FormGroup as={Row} className="title">
+					<FormGroup as={Row} className="title" >
 						<FormLabel  >
 							כותרת:
 						</FormLabel>
-						<Form.Control size="sm" type="text" name="title" placeholder="הכנס כותרת" />
+						<Form.Control size="sm" type="text" name="title" placeholder="הכנס כותרת" minlength="2" required />
 					</FormGroup>
-					<FormGroup as={Row} className="description">
+					<FormGroup as={Row} size="sm" className="description">
 						<FormLabel>
 							תיאור מוצר:
-					</FormLabel>
-						<Form.Control as="textarea" name="description" rows="3" placeholder="הכנס תיאור מוצר" />
+						</FormLabel>
+						<Form.Control as="textarea" name="description" rows="3" placeholder=" הכנס תיאור מוצר עד 255 תווים" maxlength="255" required />
 					</FormGroup>
 					<FormGroup as={Row} className="category">
 						<FormLabel>קטגוריה</FormLabel>
-						<Form.Control size="sm" as="select" name="category" >
+						<Form.Control size="sm" as="select" name="category" required>
+							<option value="">בחר קטגוריה...</option>
 							{categories.map((cat) => {
 								return <option value={cat._id}>{cat.name}</option>
 							})}
@@ -114,20 +115,20 @@ function AddItem() {
 							<FormLabel>
 								מחיר לפי שעה:
 							</FormLabel>
-							<Form.Control size="sm" type="text" name="priceHour" placeholder='הכנס מחיר לפי שעה בש"ח' />
+							<Form.Control size="sm" type="number" name="priceHour" placeholder='הכנס מחיר לפי שעה בש"ח' min="1" step="0.5" max="10000" required />
 						</FormGroup>
 						<FormGroup as={Col} md={6} >
 							<FormLabel>
 								מחיר לפי יום:
 							</FormLabel>
-							<Form.Control size="sm" type="text" name="priceDay" placeholder='הכנס מחיר ליום בש"ח' />
+							<Form.Control size="sm" type="number" name="priceDay" placeholder='הכנס מחיר ליום בש"ח' min="1" step="0.5" max="10000" required />
 						</FormGroup>
 					</Form.Row>
 					<FormGroup as={Row} className="images">
 						<FormLabel>
 							הוסף תמונות :
 						</FormLabel>
-						<Form.File name="images" multiple />
+						<Form.File name="images" multiple required />
 					</FormGroup>
 					<Button type="submit" variant="primary" size="md" block>הוסף מוצר</Button>
 				</Container>
@@ -138,15 +139,13 @@ function AddItem() {
 							form.images.map((img, i) => {
 								return (
 									<FormGroup key={i} as={Col} xl={3} md={3} sm={6} xs={6}>
-										<Form.Check type="radio" name="mainImg" value={img} />
+										<Form.Check required="required" type="radio" name="mainImg" value={img} />
 										<Image width="170" height="180" src={img} alt="prev" rounded />
 									</FormGroup>
 								);
 							})}
 					</Row>
 				</Container>
-
-
 			</form>
 
 		</Container>
