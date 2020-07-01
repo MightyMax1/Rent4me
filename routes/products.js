@@ -38,7 +38,7 @@ router.get('/categories', async (req, res) => {
 
 
 // add product
-router.post('/', async (req, res) => {
+router.post('/addItem', async (req, res) => {
 	try {
 		// read toke from request headers
 		const token = req.headers.token;

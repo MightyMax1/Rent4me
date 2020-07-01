@@ -40,6 +40,10 @@ async function AddProduct(product) {
 		// define users collection
 		collection_items = mongoClient.db('rentme').collection('items');
 
+		//add additional data to item
+		product["createdAt"] = Date();//FIXME: time is not correct 
+		product["userId"] = 'userId toDo...';
+
 		// insert new products
 		const result = await collection_items.insertOne(product);
 

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-
 // history hook for use browser history api
 import { useHistory } from 'react-router-dom';
-
 import { Form, FormGroup, FormLabel, Button, Container, Col, Row, Image } from 'react-bootstrap'
+
+//TODO: add user id in serverSide (db->products.js)
 
 // convert file to base64
 const toBase64 = file =>
@@ -17,8 +17,8 @@ const toBase64 = file =>
 function AddItem() {
 	//add creation time of item
 	//time format "dd/mm/yyyy"
-	const currentDate = Intl.DateTimeFormat('en-GB').format(Date.now());
-	const [form, setForm] = useState({ ['createdAt']: currentDate });
+	const [form, setForm] = useState({});
+
 	const [categories, setCategories] = useState([]);
 
 	// create history instance
@@ -68,7 +68,7 @@ function AddItem() {
 		event.preventDefault();
 
 		// send request to server add new product 
-		const res = await fetch('http://localhost:4000/products', {
+		const res = await fetch('http://localhost:4000/products/addItem', {
 			method: 'POST',
 			body: JSON.stringify(form),
 			headers: {
