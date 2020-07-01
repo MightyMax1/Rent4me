@@ -1,58 +1,54 @@
 import React from 'react';
 import { Row, Col, Media, Button } from 'react-bootstrap';
-import { ReactComponent as Facebook } from './036-facebook.svg'
-import { ReactComponent as Twitter } from './008-twitter.svg'
-import { ReactComponent as Instagram } from './029-instagram.svg'
-import { ReactComponent as YouTube } from './001-youtube.svg'
 
 function FooterCont(props) {
 	return (
 		<div className='container'>
 			<Row>
-				<Col className='Follow'> ���� ������
+				<Col className='Follow'> עקבו אחרינו
 					<Row>
 						<Col>
 							<Media as="li">
 								<Media.Body>
-									<Facebook width={100}/>
+									<img src="./036-facebook.svg" width={100} />
 								</Media.Body>
 							</Media>
 							<Media as="li">
 								<Media.Body>
-									<YouTube width={100}/>
+									<img src="./001-youtube.svg" width={100} />
 								</Media.Body>
 							</Media>
 						</Col>
 						<Col>
 							<Media as="li">
 								<Media.Body>
-									<Twitter width={100}/>
+									<img src="./008-twitter.svg" width={100} />
 								</Media.Body>
 							</Media>
 							<Media as="li">
 								<Media.Body>
-									<Instagram width={100}/>
+									<img src="./029-instagram.svg" width={100} />
 								</Media.Body>
 							</Media>
 						</Col>
 					</Row>
 				</Col>
-				<Col className='OurNumbers'> ����� �������
+				<Col className='OurNumbers'> אנחנו במספרים
 					<Row>
 						<Col>
 							<Media as="li">
 								<Media.Body>
-									<div className="footerText">Registerd users</div>
+									<div className="footerText">משתמשים רשומים</div>
 								</Media.Body>
 							</Media>
 							<Media as="li">
 								<Media.Body>
-									<div className="footerText">Num of products</div>
+									<div className="footerText">סה"כ מוצרים</div>
 								</Media.Body>
 							</Media>
 							<Media as="li">
 								<Media.Body>
-									<div className="footerText">Succesfull Deals</div>
+									<div className="footerText">עסקאות מוצלחות</div>
 								</Media.Body>
 							</Media>
 						</Col>
@@ -78,23 +74,23 @@ function FooterCont(props) {
 				<Col className='Bar'>
 					<Media as="li">
 						<Media.Body>
-							<Button variant="light">About Us</Button>
+							<Button variant="light">אודות</Button>
 						</Media.Body>
 					</Media>
 					<Media as="li">
 						<Media.Body>
-							<Button variant="light">Terms & Conditions</Button>
+							<Button variant="light">תנאי תקנון</Button>
 						</Media.Body>
 					</Media>
 					<Media as="li">
 						<Media.Body>
-							<Button variant="light">About Us</Button>
+							<Button variant="light">צור קשר</Button>
 						</Media.Body>
 					</Media>
 				</Col>
 			</Row>
 		</div>
-		)
+	)
 }
 
 export default FooterCont;
