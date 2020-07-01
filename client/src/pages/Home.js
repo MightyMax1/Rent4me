@@ -28,6 +28,11 @@ function Home(props) {
 		getProducts(); // function call
 	}, []);
 
+	function formatDate(date) {
+		const d = new Date(date);
+		return d.toLocaleString('en-GB', { timeZone: 'UTC' })
+	}
+
 	console.log('categories', categories);
 	console.log('products', products);
 
@@ -35,43 +40,45 @@ function Home(props) {
 		<Container >
 			<Container className="search " style={{
 				marginTop: "1%"
-			}}>
-				< Form >
-					<Form.Row className="align-middle" >
-						<Col xl={{ span: 6, offset: 2 }} md={{ span: 6, offset: 2 }} sm={{ span: 6, offset: 2 }} xs={{ span: 6, offset: 2 }}>
-							<Form.Control name="freeSearch" type="text" size={"sm"} dir="rtl" placeholder="חיפוש חופשי" />
-						</Col>
-						<Col>
-							<Button size={"sm"} onClick={onClick}>חפש {counter}</Button>
-						</Col>
-					</Form.Row>
-				</Form>
+			}} >
+
+				<Form.Row className="align-middle" >
+					<Col xl={{ span: 6, offset: 2 }} md={{ span: 6, offset: 2 }} sm={{ span: 6, offset: 2 }} xs={{ span: 6, offset: 2 }}>
+						<Form.Control name="freeSearch" type="text" size={"sm"} dir="rtl" placeholder="חיפוש חופשי" />
+					</Col>
+					<Col>
+						<Button size={"sm"} onClick={onClick}>חפש {counter}</Button>
+					</Col>
+				</Form.Row>
 			</Container>
 			<Container className="categories" >
 				<Row style={{ marginTop: "1%" }}>
 					<Badge as={Col} variant="dark" className={"text-center"} style={{ fontSize: "medium" }} >קטגוריות</Badge>
 				</Row>
-				<Row>
+				<CardGroup as={Row} className="pt-3" >
 					{
 						categories.map((category, i) => {
 							return (
-								< Card as={Col} xl={3} md={3} sm={6} xs={6}>
-									<Card.Img variant="top" src={category.img} style={{ maxWidth: "300px" }} />
-									<Card.Footer className="text-center">
-										<small className="text-muted">{category.name}</small>
-									</Card.Footer>
-								</Card>
+								<Col xl={3} md={3} sm={6} xs={6}>
+									<Card >
+										<Card.Img variant="top" src={category.img} />
+
+										<Card.Footer className="text-center">
+											<small className="text-muted">{category.name}</small>
+										</Card.Footer>
+									</Card>
+								</Col>
 							)
 						})
 					}
-				</Row>
+				</CardGroup>
 			</Container>
 			<Container className="trending"></Container>
 			<Container className="newest">
-				<Row style={{ marginTop: "3%" }}>
+				<Row className="pt-3">
 					<Badge as={Col} variant="dark" style={{ fontSize: "medium" }}>מוצרים חדשים</Badge>
 				</Row>
-				<CardGroup as={Row} >
+				<CardGroup as={Row} className="pt-3" >
 					{
 						products.map((product, i) => {
 							return (
@@ -82,13 +89,12 @@ function Home(props) {
 											<Card.Title>{product.title}</Card.Title>
 										</Card.Body>
 										<Card.Footer className="text-center">
-											<small className="text-muted"> 27/06/2020 16:35</small>
+											<small className="text-muted">{formatDate(product.createdAt)}</small>
 										</Card.Footer>
 									</Card>
 								</Col>
 							);
 						})
-
 					}
 				</CardGroup>
 			</Container>

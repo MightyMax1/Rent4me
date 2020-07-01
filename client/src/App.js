@@ -1,5 +1,4 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 
 // Route - render component base on path
@@ -7,6 +6,7 @@ import { Route } from 'react-router-dom';
 
 // import component
 import MainNavbar from './componets/MainNavbar';
+import FooterCont from './componets/FooterCont';
 
 import Home from './pages/Home';
 import AddItem from './pages/AddItem';
@@ -29,6 +29,9 @@ function App() {
 				<Route exact path="/messages" component={Messages} />
 				<Route exact path="/help" component={Help} />
 			</div>
+			<footer className='stickyFooter' >
+				<FooterCont />
+			</footer>
 		</div>
 	);
 }

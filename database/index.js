@@ -1,6 +1,6 @@
 const { getMongoClient } = require('../helpers');
 
-async function getProducts() {
+async function getProductsAndCategories() {
 	try {
 		const mongoClient = await getMongoClient();
 		// define users collection
@@ -18,12 +18,31 @@ async function getProducts() {
 	} catch (error) { }
 }
 
+async function getCategories() {
+	try {
+		const mongoClient = await getMongoClient();
+		// define users collection
+		collection_categories = mongoClient.db('rentme').collection('categories');
+
+		// find all categories,
+		const categories = await collection_categories.find({}).toArray();
+
+		return { categories };
+	} catch (error) { }
+}
+
+
+
 async function AddProduct(product) {
 	try {
 		// get mongo connection
 		const mongoClient = await getMongoClient();
 		// define users collection
 		collection_items = mongoClient.db('rentme').collection('items');
+
+		//add additional data to item
+		product["createdAt"] = Date();//FIXME: time is not correct 
+		product["userId"] = 'userId toDo...';
 
 		// insert new products
 		const result = await collection_items.insertOne(product);
@@ -35,4 +54,4 @@ async function AddProduct(product) {
 	}
 }
 
-module.exports = { getProducts, AddProduct };
+module.exports = { getProductsAndCategories, AddProduct, getCategories };
