@@ -24,6 +24,11 @@ const Category = () => {
 		getProducts();
 	}, []);
 
+	function formatDate(date) {
+		const d = new Date(date);
+		return d.toLocaleString('en-GB');
+	}
+
 	return (
 		<Container className="categories">
 			<Row style={{ marginTop: '1%' }}>
@@ -41,7 +46,7 @@ const Category = () => {
 									<Card.Title>{product.title}</Card.Title>
 								</Card.Body>
 								<Card.Footer className="text-center">
-									<small className="text-muted">{product.createdAt}</small>
+									<small className="text-muted">{formatDate(product.createdAt)}</small>
 								</Card.Footer>
 							</Card>
 						</Col>
