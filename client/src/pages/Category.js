@@ -6,10 +6,11 @@ import { Container, Row, Col, Badge, Card, CardDeck, CardGroup } from 'react-boo
 const Category = () => {
 	let { id } = useParams();
 	let [products, setProducts] = useState([]);
-  
+	let [categoryTitle, setCategoryTitle] = useState('');
+
 	// run after every render (by default)
 	useEffect(() => {
-		console.log('useEffect');
+		console.log('useEffect...');
 
 		async function getProducts() {
 			const res = await fetch(`http://localhost:4000/products/category/${id}`);
@@ -17,7 +18,8 @@ const Category = () => {
 
 			console.log('data', data);
 
-			setProducts(data);
+			setProducts(data.itemsByCategory);
+			setCategoryTitle(data.categoryTitle)
 		}
 		getProducts();
 	}, []);
@@ -25,8 +27,8 @@ const Category = () => {
 	return (
 		<Container className="categories">
 			<Row style={{ marginTop: '1%' }}>
-				<Badge as={Col} variant="dark" className={'text-center'} style={{ fontSize: 'medium' }}>
-					category {id}
+				<Badge as={Col} variant="dark" className={'text-center'} style={{ fontSize: 'large' }}>
+					{categoryTitle}
 				</Badge>
 			</Row>
 			<CardGroup as={Row} className="pt-3">
