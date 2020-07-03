@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Container, Row, Col, Badge, Card, CardDeck, CardGroup } from 'react-bootstrap';
@@ -5,7 +6,7 @@ import { Container, Row, Col, Badge, Card, CardDeck, CardGroup } from 'react-boo
 const Category = () => {
 	let { id } = useParams();
 	let [products, setProducts] = useState([]);
-
+  
 	// run after every render (by default)
 	useEffect(() => {
 		console.log('useEffect');
@@ -15,6 +16,7 @@ const Category = () => {
 			const data = await res.json();
 
 			console.log('data', data);
+
 			setProducts(data);
 		}
 		getProducts();
@@ -46,6 +48,7 @@ const Category = () => {
 			</CardGroup>
 		</Container>
 	);
+
 };
 
 export default Category;
