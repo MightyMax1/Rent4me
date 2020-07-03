@@ -15,7 +15,21 @@ async function getProductsAndCategories() {
 		const categories = await collection_categories.find({}).toArray();
 
 		return { categories, newProducts };
-	} catch (error) { }
+	} catch (error) {}
+}
+
+async function getProductsByCategoryId(id) {
+	try {
+		const mongoClient = await getMongoClient();
+		// define users collection
+		collection_items = mongoClient.db('rentme').collection('items');
+		collection_categories = mongoClient.db('rentme').collection('categories');
+
+		// find all products by category id
+		const result = await collection_items.find({ category_id: id }).toArray();
+
+		return result;
+	} catch (error) {}
 }
 
 async function getCategories() {
@@ -28,10 +42,8 @@ async function getCategories() {
 		const categories = await collection_categories.find({}).toArray();
 
 		return { categories };
-	} catch (error) { }
+	} catch (error) {}
 }
-
-
 
 async function AddProduct(product) {
 	try {
@@ -41,8 +53,8 @@ async function AddProduct(product) {
 		collection_items = mongoClient.db('rentme').collection('items');
 
 		//add additional data to item
-		product["createdAt"] = Date();//FIXME: time is not correct 
-		product["userId"] = 'userId toDo...';
+		product['createdAt'] = Date(); //FIXME: time is not correct
+		product['userId'] = 'userId toDo...';
 
 		// insert new products
 		const result = await collection_items.insertOne(product);
@@ -54,4 +66,4 @@ async function AddProduct(product) {
 	}
 }
 
-module.exports = { getProductsAndCategories, AddProduct, getCategories };
+module.exports = { getProductsAndCategories, AddProduct, getCategories, getProductsByCategoryId };

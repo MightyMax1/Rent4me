@@ -20,6 +20,23 @@ router.get('/homePage', async (req, res) => {
 	}
 });
 
+// get product by category
+router.get('/category/:id', async (req, res) => {
+	try {
+		const { id } = req.params;
+		// call db function for get products
+		const products = await db.getProductsByCategoryId(id);
+
+		// return response with products
+		res.json(products);
+	} catch (err) {
+		console.log('get products err: ', err.message);
+		res.status(500).json({
+			err: err.message,
+		});
+	}
+});
+
 router.get('/categories', async (req, res) => {
 	try {
 		// call db function for get categories
@@ -34,8 +51,6 @@ router.get('/categories', async (req, res) => {
 		});
 	}
 });
-
-
 
 // add product
 router.post('/addItem', async (req, res) => {
