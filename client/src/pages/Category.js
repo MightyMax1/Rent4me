@@ -6,10 +6,11 @@ import { Container, Row, Col, Badge, Card, CardDeck, CardGroup } from 'react-boo
 const Category = () => {
 	let { id } = useParams();
 	let [products, setProducts] = useState([]);
-  
+	let [categoryTitle, setCategoryTitle] = useState('');
+
 	// run after every render (by default)
 	useEffect(() => {
-		console.log('useEffect');
+		console.log('useEffect...');
 
 		async function getProducts() {
 			const res = await fetch(`http://localhost:4000/products/category/${id}`);
@@ -17,16 +18,22 @@ const Category = () => {
 
 			console.log('data', data);
 
-			setProducts(data);
+			setProducts(data.itemsByCategory);
+			setCategoryTitle(data.categoryTitle)
 		}
 		getProducts();
 	}, []);
 
+	function formatDate(date) {
+		const d = new Date(date);
+		return d.toLocaleString('en-GB');
+	}
+
 	return (
 		<Container className="categories">
 			<Row style={{ marginTop: '1%' }}>
-				<Badge as={Col} variant="dark" className={'text-center'} style={{ fontSize: 'medium' }}>
-					category {id}
+				<Badge as={Col} variant="dark" className={'text-center'} style={{ fontSize: 'large' }}>
+					{categoryTitle}
 				</Badge>
 			</Row>
 			<CardGroup as={Row} className="pt-3">
@@ -39,7 +46,7 @@ const Category = () => {
 									<Card.Title>{product.title}</Card.Title>
 								</Card.Body>
 								<Card.Footer className="text-center">
-									<small className="text-muted">{product.createdAt}</small>
+									<small className="text-muted">{formatDate(product.createdAt)}</small>
 								</Card.Footer>
 							</Card>
 						</Col>
