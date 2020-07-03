@@ -44,6 +44,7 @@ function MainNavbar({ onLogin, onLogout, user }) {
 			},
 		});
 		const data = await res.json();
+    
 		// close modal
 		handleClose();
 
@@ -88,7 +89,9 @@ function MainNavbar({ onLogin, onLogout, user }) {
 								</Nav.Link>
 							);
 						})}
-						<Button variant="outline-primary" size="sm" onClick={ToggleLogin}>
+
+						<Button variant={user ? "outline-danger" : "outline-primary"} size="sm" onClick={ToggleLogin}>
+
 							{user ? 'התנתק' : 'התחבר'}
 						</Button>
 					</Nav>
@@ -99,6 +102,7 @@ function MainNavbar({ onLogin, onLogout, user }) {
 			<Modal show={show} onHide={handleClose}>
 				<Modal.Header closeButton>
 					<Modal.Title>התחבר לחשבונך</Modal.Title>
+
 				</Modal.Header>
 				<Modal.Body>
 					<Form dir="rtl" onSubmit={handleLogin} onChange={onChange}>
