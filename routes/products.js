@@ -60,14 +60,13 @@ router.post('/addItem', async (req, res) => {
 
 		// verify token and get decoded (object)
 		const decoded = await verifyToken(token);
-
-		console.log('body', req.body);
 		console.log('user', decoded);
 
 		// add product (req.body) object to database
 		const newProduct = await db.AddProduct(req.body);
 
 		res.json(newProduct);
+
 	} catch (err) {
 		console.log('get products err: ', err.message);
 		res.status(500).json({
