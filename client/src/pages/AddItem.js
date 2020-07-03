@@ -103,7 +103,7 @@ function AddItem() {
 					</FormGroup>
 					<FormGroup as={Row} className="category">
 						<FormLabel>קטגוריה</FormLabel>
-						<Form.Control size="sm" as="select" name="category" required>
+						<Form.Control size="sm" as="select" name="category_id" required>
 							<option value="">בחר קטגוריה...</option>
 							{categories.map(cat => {
 								return <option value={cat._id}>{cat.name}</option>;
