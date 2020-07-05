@@ -18,7 +18,6 @@ function Messages(props) {
 	return 'Messages';
 }
 
-
 function App() {
 	const [user, setUser] = useState(null);
 

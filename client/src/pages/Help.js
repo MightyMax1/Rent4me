@@ -1,14 +1,19 @@
 import React from 'react';
-import {Accordion, Card, Button, Container} from 'react-bootstrap';
+import {Accordion, Card, Button, Container, Row, Badge, Col} from 'react-bootstrap';
 
 function Help(props){
     return(
-        <Container fluid={true} className={'border-right border-left px-5'} style={{ maxWidth: '1250px' }}>
-            <Accordion>
+        <Container fluid={true} style={{ maxWidth: '1000px' }}>
+            <Row style={{ marginTop: '1%' }}>
+					<Badge as={Col} variant="dark" className={'text-center'} style={{ fontSize: 'medium' }}>
+						שאלות נפוצות
+					</Badge>
+			</Row>
+            <Accordion className="text-right" dir="rtl">
                 <Card>
                     <Card.Header>
                         <Accordion.Toggle as={Button} variant="link" eventKey="0">
-                            שאלה 1
+                            כיצד מתחברים למערכת
                         </Accordion.Toggle>
                     </Card.Header>
                     <Accordion.Collapse eventKey="0">
@@ -18,7 +23,7 @@ function Help(props){
                 <Card>
                     <Card.Header>
                         <Accordion.Toggle as={Button} variant="link" eventKey="1">
-                            שאלה 2
+                            כיצד נרשמים למערכת
                         </Accordion.Toggle>
                     </Card.Header>
                     <Accordion.Collapse eventKey="1">
@@ -27,41 +32,41 @@ function Help(props){
                 </Card>
                 <Card>
                     <Card.Header>
-                        <Accordion.Toggle as={Button} variant="link" eventKey="0">
-                            שאלה 1
+                        <Accordion.Toggle as={Button} variant="link" eventKey="2">
+                            כיצד מזמינים מוצר
                         </Accordion.Toggle>
                     </Card.Header>
-                    <Accordion.Collapse eventKey="0">
+                    <Accordion.Collapse eventKey="2">
                         <Card.Body>Hello! I'm the body</Card.Body>
                     </Accordion.Collapse>
                 </Card>
                 <Card>
                     <Card.Header>
-                        <Accordion.Toggle as={Button} variant="link" eventKey="1">
-                            שאלה 2
+                        <Accordion.Toggle as={Button} variant="link" eventKey="3">
+                            כיצד פותחים חשבון משכיר
                         </Accordion.Toggle>
                     </Card.Header>
-                    <Accordion.Collapse eventKey="1">
+                    <Accordion.Collapse eventKey="3">
                         <Card.Body>Hello! I'm another body</Card.Body>
                     </Accordion.Collapse>
                 </Card>
                 <Card>
                     <Card.Header>
-                        <Accordion.Toggle as={Button} variant="link" eventKey="0">
-                            שאלה 1
+                        <Accordion.Toggle as={Button} variant="link" eventKey="4">
+                            כיצד משכירים מוצר
                         </Accordion.Toggle>
                     </Card.Header>
-                    <Accordion.Collapse eventKey="0">
+                    <Accordion.Collapse eventKey="4">
                         <Card.Body>Hello! I'm the body</Card.Body>
                     </Accordion.Collapse>
                 </Card>
                 <Card>
                     <Card.Header>
-                        <Accordion.Toggle as={Button} variant="link" eventKey="1">
-                            שאלה 2
+                        <Accordion.Toggle as={Button} variant="link" eventKey="5">
+                            היכן מחפשים מוצרים להשכרה
                         </Accordion.Toggle>
                     </Card.Header>
-                    <Accordion.Collapse eventKey="1">
+                    <Accordion.Collapse eventKey="5">
                         <Card.Body>Hello! I'm another body</Card.Body>
                     </Accordion.Collapse>
                 </Card>
