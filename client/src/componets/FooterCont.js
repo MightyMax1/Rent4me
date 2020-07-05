@@ -10,24 +10,24 @@ function FooterCont(props) {
 						<Col>
 							<Media as="li">
 								<Media.Body>
-									<img src="./036-facebook.svg" width={100} />
+									<img className="img-fluid" src="./036-facebook.svg" width={100} />
 								</Media.Body>
 							</Media>
 							<Media as="li">
 								<Media.Body>
-									<img src="./001-youtube.svg" width={100} />
+									<img img className="img-fluid" src="./001-youtube.svg" width={100} />
 								</Media.Body>
 							</Media>
 						</Col>
 						<Col>
 							<Media as="li">
 								<Media.Body>
-									<img src="./008-twitter.svg" width={100} />
+									<img img className="img-fluid" src="./008-twitter.svg" width={100} />
 								</Media.Body>
 							</Media>
 							<Media as="li">
 								<Media.Body>
-									<img src="./029-instagram.svg" width={100} />
+									<img img className="img-fluid" src="./029-instagram.svg" width={100} />
 								</Media.Body>
 							</Media>
 						</Col>
