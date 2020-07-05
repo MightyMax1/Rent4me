@@ -3,13 +3,13 @@ import {Accordion, Card, Button, Container, Row, Badge, Col} from 'react-bootstr
 
 function Help(props){
     return(
-        <Container fluid={true} style={ {maxWidth: '1000px'}}>
+        <Container fluid={true} style={ {maxWidth: '1100px'}}>
             <Row style={{ marginTop: '1%' }}>
 					<Badge as={Col} variant="dark" className={'text-center'} style={{ fontSize: 'medium' }}>
 						שאלות נפוצות
 					</Badge>
 			</Row>
-            <Accordion className="text-right" dir="rtl">
+            <Accordion style={{ marginTop: '1%' }} className="text-right" dir="rtl">
                 <Card>
                     <Card.Header>
                         <Accordion.Toggle as={Button} variant="link" eventKey="0">
@@ -60,7 +60,7 @@ function Help(props){
                         <Card.Body>Hello! I'm the body</Card.Body>
                     </Accordion.Collapse>
                 </Card>
-                <Card>
+                <Card style={{marginBottom: '1%'}}>
                     <Card.Header>
                         <Accordion.Toggle as={Button} variant="link" eventKey="5">
                             היכן מחפשים מוצרים להשכרה
