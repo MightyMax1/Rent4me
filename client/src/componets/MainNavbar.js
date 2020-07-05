@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 // NavLink - change url
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { Navbar, Nav, Col, Button, Modal, Form, Row } from 'react-bootstrap';
 
 
@@ -15,6 +15,7 @@ const links = [
 function MainNavbar({ onLogin, onLogout, user }) {
 	//login modal (pop-up)
 	const [show, setShow] = useState(false);
+	const [form, setForm] = useState({});
 
 	//handle close/open of login modal
 	const handleClose = () => setShow(false);
@@ -28,7 +29,14 @@ function MainNavbar({ onLogin, onLogout, user }) {
 		handleShow();
 	};
 
-	const [form, setForm] = useState({});
+	// create history instance
+	const history = useHistory();
+	const toRegister = () => {
+		handleClose();
+		history.push('/register')
+	};
+
+
 
 	const handleLogin = async event => {
 		// login flow ->
@@ -44,7 +52,7 @@ function MainNavbar({ onLogin, onLogout, user }) {
 			},
 		});
 		const data = await res.json();
-    
+
 		// close modal
 		handleClose();
 
@@ -133,7 +141,7 @@ function MainNavbar({ onLogin, onLogout, user }) {
 					</Form>
 				</Modal.Body>
 				<Modal.Footer>
-					<Button size="sm" variant="secondary" onClick={handleClose}>
+					<Button onClick={toRegister} size="sm" variant="secondary" >
 						ליצור חשבון
 					</Button>
 				</Modal.Footer>
