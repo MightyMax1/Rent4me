@@ -3,7 +3,7 @@ import {Accordion, Card, Button, Container, Row, Badge, Col} from 'react-bootstr
 
 function Help(props){
     return(
-        <Container fluid={true} style={{ maxWidth: '1000px' }}>
+        <Container fluid={true} style={ {maxWidth: '1000px'}}>
             <Row style={{ marginTop: '1%' }}>
 					<Badge as={Col} variant="dark" className={'text-center'} style={{ fontSize: 'medium' }}>
 						שאלות נפוצות
