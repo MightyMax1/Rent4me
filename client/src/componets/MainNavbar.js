@@ -10,6 +10,7 @@ const links = [
 	{ text: 'הודעות', isPrivate: true, to: '/messages' },
 	{ text: 'איזור אישי', isPrivate: false, to: '/private' },
 	{ text: 'עזרה', isPrivate: false, to: '/help' },
+	{ text: 'צור קשר', isPrivate: false, to: '/ContactUs' },
 ];
 
 function MainNavbar({ onLogin, onLogout, user }) {
