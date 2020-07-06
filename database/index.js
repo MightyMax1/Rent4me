@@ -39,6 +39,22 @@ async function getProductsByCategoryId(id) {
 	}
 }
 
+async function getItemById(id) {
+	try {
+		const mongoClient = await getMongoClient();
+		// define items collection
+		collection_items = mongoClient.db('rentme').collection('items');
+
+		// find item by id
+		const ObjectId = require('mongodb').ObjectID;
+		const itemDetails = await collection_items.findOne({ _id: ObjectId(id) });
+
+		return { itemDetails };
+	} catch (error) {
+		console.log(error.message)
+	}
+}
+
 async function getCategories() {
 	try {
 		const mongoClient = await getMongoClient();
@@ -72,4 +88,4 @@ async function AddProduct(product) {
 	}
 }
 
-module.exports = { getProductsAndCategories, AddProduct, getCategories, getProductsByCategoryId };
+module.exports = { getProductsAndCategories, AddProduct, getCategories, getProductsByCategoryId, getItemById };

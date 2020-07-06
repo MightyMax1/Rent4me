@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Button, Container, Row, CardDeck, CardGroup, Col, Badge, Form } from 'react-bootstrap';
-
 import { Link } from 'react-router-dom';
 
 function Home(props) {
@@ -91,10 +90,12 @@ function Home(props) {
 						return (
 							<Col xl={3} md={3} sm={6} xs={6}>
 								<Card key={i}>
-									<Card.Img variant="top" src={product.mainImg} />
-									<Card.Body>
-										<Card.Title>{product.title}</Card.Title>
-									</Card.Body>
+									<Link to={`/item/${product._id}`}>
+										<Card.Img variant="top" src={product.mainImg} />
+										<Card.Body>
+											<Card.Title>{product.title}</Card.Title>
+										</Card.Body>
+									</Link>
 									<Card.Footer className="text-center">
 										<small className="text-muted">{formatDate(product.createdAt)}</small>
 									</Card.Footer>

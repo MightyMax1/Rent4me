@@ -37,6 +37,23 @@ router.get('/category/:id', async (req, res) => {
 	}
 });
 
+// get item by id
+router.get('/item/:id', async (req, res) => {
+	try {
+		const { id } = req.params;
+		// call db function for get item by id
+		const item = await db.getItemById(id);
+
+		// return response with item details
+		res.json(item);
+	} catch (err) {
+		console.log('get products err: ', err.message);
+		res.status(500).json({
+			err: err.message,
+		});
+	}
+});
+
 router.get('/categories', async (req, res) => {
 	try {
 		// call db function for get categories

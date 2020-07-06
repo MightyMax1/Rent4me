@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { Container, Row, Col, Badge, Card, CardDeck, CardGroup } from 'react-bootstrap';
 
 const Category = () => {
@@ -41,10 +41,12 @@ const Category = () => {
 					return (
 						<Col xl={3} md={3} sm={6} xs={6}>
 							<Card key={i}>
-								<Card.Img variant="top" src={product.mainImg} />
-								<Card.Body>
-									<Card.Title>{product.title}</Card.Title>
-								</Card.Body>
+								<Link to={`/item/${product._id}`}>
+									<Card.Img variant="top" src={product.mainImg} />
+									<Card.Body>
+										<Card.Title>{product.title}</Card.Title>
+									</Card.Body>
+								</Link>
 								<Card.Footer className="text-center">
 									<small className="text-muted">{formatDate(product.createdAt)}</small>
 								</Card.Footer>
