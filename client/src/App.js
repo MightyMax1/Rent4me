@@ -9,17 +9,15 @@ import MainNavbar from './componets/MainNavbar';
 import FooterCont from './componets/FooterCont';
 
 import Home from './pages/Home';
+
 import Register from './pages/Register';
+import Help from './pages/Help';
 import AddItem from './pages/AddItem';
 import PrivatePage from './pages/Private';
 import CategoryPage from './pages/Category';
 
 function Messages(props) {
 	return 'Messages';
-}
-
-function Help(props) {
-	return 'Help';
 }
 
 function App() {
