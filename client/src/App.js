@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './App.css';
 
 // Route - render component base on path
-import { Route } from 'react-router-dom';
+import { Route, useHistory } from 'react-router-dom';
 
 // import component
 import MainNavbar from './componets/MainNavbar';
@@ -25,6 +25,7 @@ function Help(props) {
 function App() {
 	const [user, setUser] = useState(null);
 
+	const history = useHistory();
 
 	// when user login -> save user object in state 
 	const onLogin = newUser => setUser(newUser);
@@ -34,6 +35,9 @@ function App() {
 	const onLogout = () => {
 		setUser(null);
 		localStorage.removeItem('token');
+
+		//redirect to homePage when logOut
+		history.push("/");
 	};
 
 	return (
@@ -44,7 +48,9 @@ function App() {
 				<Route exact path="/addItem" component={AddItem} />
 				<Route exact path="/messages" component={Messages} />
 				<Route exact path="/help" component={Help} />
-				<Route exact path="/register" component={Register} />
+				<Route exact path="/register" >
+					<Register onLogin={onLogin} />
+				</Route>
 				<Route exact path="/private" component={PrivatePage} />
 				<Route exact path="/category/:id">
 					<CategoryPage />

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 // NavLink - change url
 import { Link, useHistory } from 'react-router-dom';
-import { Navbar, Nav, Col, Button, Modal, Form, Row } from 'react-bootstrap';
+import { Navbar, Nav, Col, Button, Modal, Form, Row, Badge } from 'react-bootstrap';
 
 
 // array of all link, every link have text, path and isPrivate(boolean if it private only logged in user can access )
@@ -83,7 +83,10 @@ function MainNavbar({ onLogin, onLogout, user }) {
 			<Col xl={2} md={2} sm={2} xs={2}>
 				<Navbar.Brand as={Link} to="/">
 					<img src="/logo1.png" width="45" height="45" className="d-inline-block align-top" />
-					{user && user.firstName}
+					{user
+						? < Badge pill variant="light" className="pl-3 mt-2">שלום,{user.firstName}</Badge>
+						: ''
+					}
 				</Navbar.Brand>
 			</Col>
 			<Col xl={{ span: 4, offset: 6 }} md={{ span: 5, offset: 5 }} sm={{ span: 2, offset: 8 }} xs={{ span: 3, offset: 7 }}>

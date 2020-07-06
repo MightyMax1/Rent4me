@@ -1,16 +1,42 @@
 import React, { useState } from 'react';
-import { Container, Row, Col, Button, Form, FormGroup, FormLabel } from 'react-bootstrap';
+import { useHistory } from "react-router-dom";
+import { Container, Row, Col, Button, Form, FormGroup, FormLabel, Image } from 'react-bootstrap';
 
+const toBase64 = file =>
+    new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
 
-
-const Register = () => {
+function Register({ onLogin }) {
 
     const [form, setForm] = useState({});
+    const history = useHistory();
 
     async function onChange(e) {
-        const { name, value } = e.target;
+        const { name, value, files } = e.target;
+
+        // handle img  file input
+        if (name == 'profilepPic') {
+
+            let newImages = '';
+            if (files) {
+                // console.log(files)
+                //  convert it to base64
+                newImages = await toBase64(files[0]);
+            }
+            //preview img
+            const showImgSection = document.querySelector('#profileImg');
+            showImgSection.classList.remove('invisible');
+            // update state with new files of base64
+            return setForm({ ...form, [name]: newImages });
+        }
+
+        // handle other  input's
         setForm({ ...form, [name]: value });
-        console.log(`name ${name} | value ${value}`)
+        console.log(form)
     }
 
     async function onSubmit(e) {
@@ -18,6 +44,26 @@ const Register = () => {
         console.log('form deliverd')
         console.log('form:', form);
 
+        // send request to server register new user
+        const res = await fetch('http://localhost:4000/auth/signup', {
+            method: 'POST',
+            body: JSON.stringify(form),
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        //respon from server
+        const data = await res.json();
+        console.log("from server", data)
+
+        // save token local storage for next api calls
+        localStorage.setItem('token', data.token);
+        // update use state in App Component
+        onLogin(data.user);
+
+        // redirect to homePage 
+        history.push("/");
     }
 
     return (
@@ -32,7 +78,7 @@ const Register = () => {
                         </FormGroup>
                         <FormGroup as={Col} className=" text-center">
                             <FormLabel >שם משפחה:</FormLabel>
-                            <Form.Control size="sm" type="text" name="lastName" placeholder="הכנס שם מלא" minlength="2" required />
+                            <Form.Control size="sm" type="text" name="lastName" placeholder="הכנס שם משפחה" minlength="2" required />
                         </FormGroup>
                     </Form.Row>
                     <FormGroup as={Row} className="text-right">
@@ -51,11 +97,13 @@ const Register = () => {
                         <FormLabel >עיר מגורים</FormLabel>
                         <Form.Control size="sm" type="text" name="city" placeholder="הכנס שם יישוב " minlength="2" required />
                     </FormGroup>
-                    <FormGroup as={Row} className="images">
+                    <FormGroup as={Row} className="image">
                         <FormLabel>הוסף תמונת פרופיל</FormLabel>
                         <Form.File name="profilepPic" />
                     </FormGroup>
-
+                    <Row className="justify-content-center invisible" id="profileImg">
+                        <Image width="170" height="180" src={form.profilepPic} alt="prev" roundedCircle />
+                    </Row>
 
                     <Button type="submit" variant="primary" size="md" block>
                         הרשם
