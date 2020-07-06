@@ -9,12 +9,12 @@ import MainNavbar from './componets/MainNavbar';
 import FooterCont from './componets/FooterCont';
 
 import Home from './pages/Home';
-
 import Register from './pages/Register';
 import Help from './pages/Help';
 import AddItem from './pages/AddItem';
 import PrivatePage from './pages/Private';
 import CategoryPage from './pages/Category';
+import Item from './pages/Item';
 
 function Messages(props) {
 	return 'Messages';
@@ -46,12 +46,15 @@ function App() {
 				<Route exact path="/addItem" component={AddItem} />
 				<Route exact path="/messages" component={Messages} />
 				<Route exact path="/help" component={Help} />
+				<Route exact path="/private" component={PrivatePage} />
 				<Route exact path="/register" >
 					<Register onLogin={onLogin} />
 				</Route>
-				<Route exact path="/private" component={PrivatePage} />
 				<Route exact path="/category/:id">
 					<CategoryPage />
+				</Route>
+				<Route exact path="/item/:id">
+					<Item />
 				</Route>
 			</div>
 			<footer className="sticky-bottom mt-5">
