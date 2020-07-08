@@ -44,7 +44,15 @@ const Category = () => {
 								<Link to={`/item/${product._id}`}>
 									<Card.Img variant="top" src={product.mainImg} />
 									<Card.Body>
-										<Card.Title>{product.title}</Card.Title>
+										<Card.Title className="text-center">
+											{product.title}
+											<p>
+												<Badge pill variant="primary">לשעה: {product.priceHour}</Badge>
+												<br />
+												<Badge pill variant="primary">ליום: {product.priceDay}</Badge>
+											</p>
+
+										</Card.Title>
 									</Card.Body>
 								</Link>
 								<Card.Footer className="text-center">
