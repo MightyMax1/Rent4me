@@ -44,12 +44,19 @@ async function getItemById(id) {
 		const mongoClient = await getMongoClient();
 		// define items collection
 		collection_items = mongoClient.db('rentme').collection('items');
+		// define users collection
+		collection_users = mongoClient.db('rentme').collection('users');
 
-		// find item by id
 		const ObjectId = require('mongodb').ObjectID;
+		// find item by id
 		const itemDetails = await collection_items.findOne({ _id: ObjectId(id) });
+		//find lessor own the item
+		//TODO: delete the fake and uncomment the lessorId
+		const fakeUserId = '5ee8a3e45fe4e235b8228cc2';
+		//const lessorId = itemDetails.userId
+		const lessor = await collection_users.findOne({ _id: ObjectId(fakeUserId) });
 
-		return { itemDetails };
+		return { itemDetails, lessor };
 	} catch (error) {
 		console.log(error.message)
 	}
