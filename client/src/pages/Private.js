@@ -1,17 +1,20 @@
 import React from 'react';
-
-import { Tab, Tabs } from 'react-bootstrap';
+import Lessee from './Lessee';
+import Lessor from './Lessor';
+import { Container, Tab, Tabs } from 'react-bootstrap';
 
 const Private = () => {
 	return (
-		<Tabs defaultActiveKey="1" id="uncontrolled-tab-example">
-			<Tab eventKey="1" title="שוכר">
-				שוכר
-			</Tab>
-			<Tab eventKey="2" title="משכיר">
-				משכיר
-			</Tab>
-		</Tabs>
+		<Container>
+			<Tabs defaultActiveKey="1" id="uncontrolled-tab-example" dir="rtl">
+				<Tab eventKey="1" title="שוכר">
+					<Lessee />
+				</Tab>
+				<Tab eventKey="2" title="משכיר">
+					<Lessor />
+				</Tab>
+			</Tabs>
+		</Container>
 	);
 };
 
