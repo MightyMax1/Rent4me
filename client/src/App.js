@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './App.css';
 
 // Route - render component base on path
-import { Route, useHistory } from 'react-router-dom';
+import { Route, useHistory, Switch } from 'react-router-dom';
 
 // import component
 import MainNavbar from './componets/MainNavbar';
@@ -28,9 +28,8 @@ function App() {
 
 	const history = useHistory();
 
-	// when user login -> save user object in state 
+	// when user login -> save user object in state
 	const onLogin = newUser => setUser(newUser);
-
 
 	// when user log out -> delete user object and token
 	const onLogout = () => {
@@ -38,31 +37,34 @@ function App() {
 		localStorage.removeItem('token');
 
 		//redirect to homePage when logOut
-		history.push("/");
+		history.push('/');
 	};
 
 	return (
 		<div className="App">
 			<MainNavbar onLogin={onLogin} user={user} onLogout={onLogout} className=" mb-3" />
 			<div>
-				<Route exact path="/" component={Home} />
-				<Route exact path="/addItem" component={AddItem} />
-				<Route exact path="/messages" component={Messages} />
-				<Route exact path="/help" component={Help} />
-				<Route exact path="/private" component={PrivatePage} />
-				<Route exact path="/private/lessor/booking" component={BookingLessor} />
-				<Route exact path="/private/lessor/current_rent" component={CurrentLessor} />
-				<Route exact path="/private/lessor/history" component={HistoryLessor} />
-				<Route exact path="/register" >
-					<Register onLogin={onLogin} />
-				</Route>
-				<Route exact path="/category/:id">
-					<CategoryPage />
-				</Route>
-				<Route exact path="/item/:id">
-					<Item />
-				</Route>
-
+				<Switch>
+					<Route exact path="/" component={Home} />
+					<Route exact path="/addItem" component={AddItem} />
+					<Route exact path="/messages" component={Messages} />
+					<Route exact path="/help" component={Help} />
+					<Route exact path="/private/lessor/booking">
+						<BookingLessor user={user} />
+					</Route>
+					<Route exact path="/private/lessor/current_rent" component={CurrentLessor} />
+					<Route exact path="/private/lessor/history" component={HistoryLessor} />
+					<Route path="/private" component={PrivatePage} />
+					<Route exact path="/register">
+						<Register onLogin={onLogin} />
+					</Route>
+					<Route exact path="/category/:id">
+						<CategoryPage />
+					</Route>
+					<Route exact path="/item/:id">
+						<Item user={user} />
+					</Route>
+				</Switch>
 			</div>
 			<footer className="sticky-bottom mt-5">
 				<FooterCont />

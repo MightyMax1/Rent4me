@@ -15,7 +15,7 @@ async function getProductsAndCategories() {
 		const categories = await collection_categories.find({}).toArray();
 
 		return { categories, newProducts };
-	} catch (error) { }
+	} catch (error) {}
 }
 
 async function getProductsByCategoryId(id) {
@@ -25,17 +25,16 @@ async function getProductsByCategoryId(id) {
 		collection_items = mongoClient.db('rentme').collection('items');
 		collection_categories = mongoClient.db('rentme').collection('categories');
 
-
-		// find all products by category id 
+		// find all products by category id
 		const itemsByCategory = await collection_items.find({ category_id: id }).toArray();
 		// find category title by id
 		var ObjectId = require('mongodb').ObjectID;
 		const categoryDetails = await collection_categories.find({ _id: ObjectId(id) }).toArray();
-		const categoryTitle = categoryDetails[0].name
+		const categoryTitle = categoryDetails[0].name;
 
 		return { itemsByCategory, categoryTitle };
 	} catch (error) {
-		console.log(error.message)
+		console.log(error.message);
 	}
 }
 
@@ -58,7 +57,7 @@ async function getItemById(id) {
 
 		return { itemDetails, lessor };
 	} catch (error) {
-		console.log(error.message)
+		console.log(error.message);
 	}
 }
 
@@ -71,7 +70,7 @@ async function getCategories() {
 		const categories = await collection_categories.find({}).toArray();
 
 		return { categories };
-	} catch (error) { }
+	} catch (error) {}
 }
 
 async function AddProduct(product) {
@@ -95,4 +94,48 @@ async function AddProduct(product) {
 	}
 }
 
-module.exports = { getProductsAndCategories, AddProduct, getCategories, getProductsByCategoryId, getItemById };
+// orders
+
+async function addOrder(order) {
+	try {
+		// get mongo connection
+		const mongoClient = await getMongoClient();
+		// define users collection
+		ordersCollection = mongoClient.db('rentme').collection('orders');
+
+		// insert new products
+		const result = await ordersCollection.insertOne(order);
+
+		// return the product item (with inserted _id)
+		return result.ops[0];
+	} catch (error) {
+		console.log('AddProduct err', err.message);
+	}
+}
+
+async function getOrdersByUserId(userId) {
+	try {
+		// get mongo connection
+		const mongoClient = await getMongoClient();
+		// define users collection
+		ordersCollection = mongoClient.db('rentme').collection('orders');
+
+		// insert new products
+		const orders = await ordersCollection.find({ lessorId: userId }).toArray();
+
+		// return the product item (with inserted _id)
+		return orders;
+	} catch (error) {
+		console.log('AddProduct err', err.message);
+	}
+}
+
+module.exports = {
+	getProductsAndCategories,
+	AddProduct,
+	getCategories,
+	getProductsByCategoryId,
+	getItemById,
+	addOrder,
+	getOrdersByUserId,
+};

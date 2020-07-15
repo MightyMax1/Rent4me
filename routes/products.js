@@ -83,7 +83,53 @@ router.post('/addItem', async (req, res) => {
 		const newProduct = await db.AddProduct(req.body);
 
 		res.json(newProduct);
+	} catch (err) {
+		console.log('get products err: ', err.message);
+		res.status(500).json({
+			err: err.message,
+		});
+	}
+});
 
+// order item
+router.post('/orderItem', async (req, res) => {
+	try {
+		// read toke from request headers
+
+		const { user, startRent, endRent, item, lessor, totalPrice } = req.body;
+
+		// add product (req.body) object to database
+		const order = {
+			lessorId: lessor._id,
+			lesseeId: user._id,
+			itemId: item.id,
+			startRent,
+			endRent,
+			totalPrice,
+			confirmBooking: false,
+			createdAt: Date(),
+		};
+		const newProduct = await db.addOrder(order);
+
+		res.json(newProduct);
+	} catch (err) {
+		console.log('get products err: ', err.message);
+		res.status(500).json({
+			err: err.message,
+		});
+	}
+});
+
+// get all order by user id
+router.get('/ordersByUserId', async (req, res) => {
+	try {
+		// read toke from request headers
+
+		const { id } = req.query;
+
+		const newProduct = await db.getOrdersByUserId(id);
+
+		res.json(newProduct);
 	} catch (err) {
 		console.log('get products err: ', err.message);
 		res.status(500).json({
