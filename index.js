@@ -66,10 +66,9 @@ app.post('/auth/login', async (req, res) => {
 
 		// create jwt token
 		const token = await createToken({ email: user.email });
-
 		// return response to client with token and user data
 		res.json({
-			user: user,
+			user: user, //TODO: pop out user password
 			token,
 		});
 	} catch (err) {
@@ -84,21 +83,32 @@ app.post('/auth/login', async (req, res) => {
 // sign route
 app.post('/auth/signup', async (req, res) => {
 	try {
-		const { email, password } = req.body;
+		//user details obj
+		const form = req.body;
+		//add createdAt to user obj
+		form['createdAt'] = Date();
 
 		const mongoClient = await getMongoClient();
-
 		collection = mongoClient.db('rentme').collection('users');
-
 		// insert new user to users collection
-		const insertOpr = await collection.insertOne({ email, password });
+		const insertOpr = await collection.insertOne(form);
 
-		console.log('insertOpr.opt', insertOpr.ops);
-		console.log('insertOpr.result', insertOpr.result);
+		// console.log('insertOpr.opt', insertOpr.ops[0]);
+		// console.log('insertOpr.result', insertOpr.result);
+
+		const userDataRespone = {}
+		for (let key in insertOpr.ops[0]) {
+			if (key !== '_id' && key !== 'password')
+				userDataRespone[key] = insertOpr.ops[0][key]
+		}
+
+		// create jwt token
+		const token = await createToken({ email: insertOpr.ops[0]['email'] });
 
 		res.json({
 			err: null,
-			data: 'asdas',
+			user: userDataRespone,
+			token: token
 		});
 	} catch (err) {
 		console.log('/auth/signup err:', err.message);

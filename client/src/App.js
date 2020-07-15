@@ -15,6 +15,9 @@ import AddItem from './pages/AddItem';
 import PrivatePage from './pages/Private';
 import CategoryPage from './pages/Category';
 import Item from './pages/Item';
+import BookingLessor from './pages/BookingLessor';
+import CurrentLessor from './pages/CurrentLessor';
+import HistoryLessor from './pages/HistoryLessor';
 
 function Messages(props) {
 	return 'Messages';
@@ -47,6 +50,9 @@ function App() {
 				<Route exact path="/messages" component={Messages} />
 				<Route exact path="/help" component={Help} />
 				<Route exact path="/private" component={PrivatePage} />
+				<Route exact path="/private/lessor/booking" component={BookingLessor} />
+				<Route exact path="/private/lessor/current_rent" component={CurrentLessor} />
+				<Route exact path="/private/lessor/history" component={HistoryLessor} />
 				<Route exact path="/register" >
 					<Register onLogin={onLogin} />
 				</Route>
@@ -56,6 +62,7 @@ function App() {
 				<Route exact path="/item/:id">
 					<Item />
 				</Route>
+
 			</div>
 			<footer className="sticky-bottom mt-5">
 				<FooterCont />
