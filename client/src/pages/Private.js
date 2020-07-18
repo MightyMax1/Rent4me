@@ -1,22 +1,26 @@
 import React from 'react';
 import Lessee from './Lessee';
 import Lessor from './Lessor';
-import { Container, Tab, Tabs } from 'react-bootstrap';
+import { Container, Tab, Tabs, Nav } from 'react-bootstrap';
 
-import { Route, NavLink, Redirect, Switch } from 'react-router-dom';
+import { Route, NavLink, Redirect, Switch, Link, Item } from 'react-router-dom';
 
 const Private = props => {
 	console.log('ppp', props);
 	const { path } = props.match;
 	return (
 		<Container>
-			{/* <Tabs defaultActiveKey="1" id="uncontrolled-tab-example" dir="rtl">
-				<Tab eventKey="1" title="שוכר"></Tab>
-				<Tab eventKey="2" title="משכיר"></Tab>
-			</Tabs> */}
+
 			<div>
-				<NavLink to={`${path}/lessee`}>Lessee</NavLink>
-				<NavLink to={`${path}/lessor`}>Lessor</NavLink>
+				{/* <Nav variant="pills" fill defaultActiveKey="link-1"> */}
+				<Nav variant="tabs" fill >
+					<Nav.Item>
+						<Nav.Link as={Link} to={`${path}/lessee`} eventKey="link-1">שוכר</Nav.Link>
+					</Nav.Item>
+					<Nav.Item>
+						<Nav.Link as={Link} to={`${path}/lessor`} eventKey="link-2">משכיר</Nav.Link>
+					</Nav.Item>
+				</Nav>
 			</div>
 			<Switch>
 				<Route exact path={`${path}/lessee`}>
@@ -25,6 +29,7 @@ const Private = props => {
 				<Route exact path={`${path}/lessor`}>
 					<Lessor />
 				</Route>
+				{/* on first enter to private path (default route) */}
 				<Redirect to={`${path}/lessee`} />
 			</Switch>
 		</Container>
