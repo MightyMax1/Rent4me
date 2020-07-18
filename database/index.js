@@ -1,5 +1,7 @@
 const { getMongoClient } = require('../helpers');
 
+const { ObjectID } = require('mongodb');
+
 async function getProductsAndCategories() {
 	try {
 		const mongoClient = await getMongoClient();
@@ -61,6 +63,22 @@ async function getItemById(id) {
 	}
 }
 
+async function getUserByEmail(email) {
+	try {
+		const mongoClient = await getMongoClient();
+
+		// define users collection
+		collection = mongoClient.db('rentme').collection('users');
+
+		// find user by email in usres collection
+		const user = await collection.findOne({ email: email });
+		return user;
+	} catch (error) {
+		console.log('getUserByEmail err', err.message);
+		return null;
+	}
+}
+
 async function getCategories() {
 	try {
 		const mongoClient = await getMongoClient();
@@ -113,6 +131,23 @@ async function addOrder(order) {
 	}
 }
 
+// Update order status
+async function updateOrderStatus(orderId, status, userId) {
+	try {
+		// get mongo connection
+		const mongoClient = await getMongoClient();
+		// define users collection
+		ordersCollection = mongoClient.db('rentme').collection('orders');
+
+		// insert new products
+		await ordersCollection.updateOne({ _id: ObjectID(orderId) }, { $set: { status: status } });
+		const orders = await getOrdersByUserId(userId);
+		return orders;
+	} catch (error) {
+		console.log('AddProduct err', err.message);
+	}
+}
+
 async function getOrdersByUserId(userId) {
 	try {
 		// get mongo connection
@@ -123,6 +158,8 @@ async function getOrdersByUserId(userId) {
 		// insert new products
 		const orders = await ordersCollection.find({ lessorId: userId }).toArray();
 
+		console.log('orders', typeof userId);
+
 		// return the product item (with inserted _id)
 		return orders;
 	} catch (error) {
@@ -132,10 +169,12 @@ async function getOrdersByUserId(userId) {
 
 module.exports = {
 	getProductsAndCategories,
+	getUserByEmail,
 	AddProduct,
 	getCategories,
 	getProductsByCategoryId,
 	getItemById,
 	addOrder,
 	getOrdersByUserId,
+	updateOrderStatus,
 };

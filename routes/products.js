@@ -4,6 +4,13 @@ const db = require('../database');
 
 const { verifyToken } = require('../helpers');
 
+const STATUSES = {
+	NEW_BOOKING: 'NEW_BOOKING', //item just added
+	CONFIRM_BOOKING: 'CONFIRM_BOOKING', // after lessor approve
+	CONFIRM_ITEM_BY_LESSEE: 'CONFIRM_ITEM_BY_LESSEE', // after lessee received item
+	CONFIRM_ITEM_BY_LESSOR: 'CONFIRM_ITEM_BY_LESSOR', // order finished (after lessor approve)
+};
+
 // get products
 router.get('/homePage', async (req, res) => {
 	try {
@@ -102,11 +109,11 @@ router.post('/orderItem', async (req, res) => {
 		const order = {
 			lessorId: lessor._id,
 			lesseeId: user._id,
-			itemId: item.id,
+			itemId: item._id,
 			startRent,
 			endRent,
 			totalPrice,
-			confirmBooking: false,
+			status: STATUSES.NEW_BOOKING,
 			createdAt: Date(),
 		};
 		const newProduct = await db.addOrder(order);

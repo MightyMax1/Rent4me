@@ -5,9 +5,18 @@ const http = require('http');
 const express = require('express');
 const mongoClient = require('mongodb');
 
+const STATUSES = {
+	NEW_BOOKING: 'NEW_BOOKING', //item just added
+	CONFIRM_BOOKING: 'CONFIRM_BOOKING', // after lessor approve
+	CONFIRM_ITEM_BY_LESSEE: 'CONFIRM_ITEM_BY_LESSEE', // after lessee received item
+	CONFIRM_ITEM_BY_LESSOR: 'CONFIRM_ITEM_BY_LESSOR', // order finished (after lessor approve)
+};
+
 const cors = require('cors');
 
 const productRouter = require('./routes/products');
+
+const db = require('./database');
 
 // setup express app (handle app routing)
 const app = express();
@@ -23,21 +32,47 @@ app.use('/products', productRouter);
 // helper functions
 const { getMongoClient, createToken, verifyToken } = require('./helpers');
 
-// private route example (for logn in users only with token)
-app.get('/private', async (req, res) => {
+async function privateApi(req, res, next) {
 	try {
-		// read token from headers
-		const token = req.headers.token;
+		const { token } = req.headers;
 
-		// verify token and get decoded (object)
 		const decoded = await verifyToken(token);
 
-		res.json(decoded);
+		const user = await db.getUserByEmail(decoded.email);
+
+		req.user = user;
+
+		// call next middleware
+		next();
 	} catch (err) {
-		console.log('private err', err.message);
-		res.status(500).json({
-			err: 'internal error',
+		res.status(401).json({
+			err: err.message,
 		});
+	}
+}
+
+app.get('/auth/currentUser', privateApi, async (req, res) => {
+	try {
+		console.log('user', req.user);
+
+		res.json(req.user);
+	} catch (err) {
+		res.json(null);
+	}
+});
+
+// // approve order
+app.post('/orders/approveBooking', privateApi, async (req, res) => {
+	try {
+		const { orderId } = req.body;
+
+
+		const orders = await db.updateOrderStatus(orderId, STATUSES.CONFIRM_BOOKING, req.user._id.toString());
+		console.log('orders',orders);
+		res.json(orders);
+	} catch (error) {
+		console.log('approveBooking err', err.message);
+		res.json({ err: error.message });
 	}
 });
 
@@ -96,10 +131,9 @@ app.post('/auth/signup', async (req, res) => {
 		// console.log('insertOpr.opt', insertOpr.ops[0]);
 		// console.log('insertOpr.result', insertOpr.result);
 
-		const userDataRespone = {}
+		const userDataRespone = {};
 		for (let key in insertOpr.ops[0]) {
-			if (key !== '_id' && key !== 'password')
-				userDataRespone[key] = insertOpr.ops[0][key]
+			if (key !== '_id' && key !== 'password') userDataRespone[key] = insertOpr.ops[0][key];
 		}
 
 		// create jwt token
@@ -108,7 +142,7 @@ app.post('/auth/signup', async (req, res) => {
 		res.json({
 			err: null,
 			user: userDataRespone,
-			token: token
+			token: token,
 		});
 	} catch (err) {
 		console.log('/auth/signup err:', err.message);

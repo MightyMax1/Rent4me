@@ -3,12 +3,13 @@ import React, { useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { Navbar, Nav, Col, Button, Modal, Form, Row, Badge } from 'react-bootstrap';
 
+import Api from '../Api';
 
 // array of all link, every link have text, path and isPrivate(boolean if it private only logged in user can access )
 const links = [
 	{ text: 'ראשי', isPrivate: false, to: '/' },
 	{ text: 'הודעות', isPrivate: true, to: '/messages' },
-	{ text: 'איזור אישי', isPrivate: false, to: '/private' },
+	{ text: 'איזור אישי', isPrivate: true, to: '/private' },
 	{ text: 'עזרה', isPrivate: false, to: '/help' },
 ];
 
@@ -33,10 +34,8 @@ function MainNavbar({ onLogin, onLogout, user }) {
 	const history = useHistory();
 	const toRegister = () => {
 		handleClose();
-		history.push('/register')
+		history.push('/register');
 	};
-
-
 
 	const handleLogin = async event => {
 		// login flow ->
@@ -44,14 +43,8 @@ function MainNavbar({ onLogin, onLogout, user }) {
 		event.preventDefault();
 
 		// call login api
-		const res = await fetch('http://localhost:4000/auth/login', {
-			method: 'POST',
-			body: JSON.stringify(form),
-			headers: {
-				'Content-Type': 'application/json',
-			},
-		});
-		const data = await res.json();
+		const data = await Api.login(form);
+		localStorage.setItem('token', data.token);
 
 		// close modal
 		handleClose();
@@ -77,16 +70,18 @@ function MainNavbar({ onLogin, onLogout, user }) {
 		setForm({ ...form, [name]: value });
 	};
 
-
 	return (
 		<Navbar sticky="top" bg="light" expand="md">
 			<Col xl={2} md={2} sm={2} xs={2}>
 				<Navbar.Brand as={Link} to="/">
 					<img src="/logo1.png" width="45" height="45" className="d-inline-block align-top" />
-					{user
-						? < Badge pill variant="light" className="pl-3 mt-2">שלום,{user.firstName}</Badge>
-						: ''
-					}
+					{user ? (
+						<Badge pill variant="light" className="pl-3 mt-2">
+							שלום,{user.firstName}
+						</Badge>
+					) : (
+						''
+					)}
 				</Navbar.Brand>
 			</Col>
 			<Col xl={{ span: 4, offset: 6 }} md={{ span: 5, offset: 5 }} sm={{ span: 2, offset: 8 }} xs={{ span: 3, offset: 7 }}>
@@ -101,8 +96,7 @@ function MainNavbar({ onLogin, onLogout, user }) {
 							);
 						})}
 
-						<Button variant={user ? "outline-danger" : "outline-primary"} size="sm" onClick={ToggleLogin}>
-
+						<Button variant={user ? 'outline-danger' : 'outline-primary'} size="sm" onClick={ToggleLogin}>
 							{user ? 'התנתק' : 'התחבר'}
 						</Button>
 					</Nav>
@@ -113,7 +107,6 @@ function MainNavbar({ onLogin, onLogout, user }) {
 			<Modal show={show} onHide={handleClose}>
 				<Modal.Header closeButton>
 					<Modal.Title>התחבר לחשבונך</Modal.Title>
-
 				</Modal.Header>
 				<Modal.Body>
 					<Form dir="rtl" onSubmit={handleLogin} onChange={onChange}>
@@ -144,7 +137,7 @@ function MainNavbar({ onLogin, onLogout, user }) {
 					</Form>
 				</Modal.Body>
 				<Modal.Footer>
-					<Button onClick={toRegister} size="sm" variant="secondary" >
+					<Button onClick={toRegister} size="sm" variant="secondary">
 						ליצור חשבון
 					</Button>
 				</Modal.Footer>

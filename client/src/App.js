@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 
 // Route - render component base on path
@@ -19,12 +19,16 @@ import BookingLessor from './pages/BookingLessor';
 import CurrentLessor from './pages/CurrentLessor';
 import HistoryLessor from './pages/HistoryLessor';
 
+import Api from './Api.js';
+
 function Messages(props) {
 	return 'Messages';
 }
 
 function App() {
 	const [user, setUser] = useState(null);
+
+	const [loading, setLoading] = useState(true);
 
 	const history = useHistory();
 
@@ -39,6 +43,28 @@ function App() {
 		//redirect to homePage when logOut
 		history.push('/');
 	};
+
+	// use effect run after render
+	useEffect(() => {
+		async function getCurrent() {
+			const token = localStorage.getItem('token');
+			if (!token) {
+				return setLoading(false);
+			}
+			const data = await Api.getCurrentUser();
+			if (data.err) {
+				return setLoading(false);
+			}
+			setUser(data);
+			setLoading(false);
+		}
+		getCurrent();
+	}, []);
+
+	if (loading) {
+		// wait until fetch current user finish
+		return 'loading...';
+	}
 
 	return (
 		<div className="App">
