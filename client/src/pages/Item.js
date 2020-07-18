@@ -42,6 +42,7 @@ const Item = ({ user }) => {
 			setLessor(data.lessor);
 		}
 		getItem();
+		window.scrollTo(0, 0);//scroll to top when page load
 	}, []);
 
 	function formatDate(date) {
