@@ -53,8 +53,6 @@ async function privateApi(req, res, next) {
 
 app.get('/auth/currentUser', privateApi, async (req, res) => {
 	try {
-		console.log('user', req.user);
-
 		res.json(req.user);
 	} catch (err) {
 		res.json(null);
@@ -68,7 +66,7 @@ app.post('/orders/approveBooking', privateApi, async (req, res) => {
 
 
 		const orders = await db.updateOrderStatus(orderId, STATUSES.CONFIRM_BOOKING, req.user._id.toString());
-		console.log('orders',orders);
+		console.log('orders', orders);
 		res.json(orders);
 	} catch (error) {
 		console.log('approveBooking err', err.message);

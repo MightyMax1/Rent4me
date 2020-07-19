@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Container, Row, Col, Button, Form, FormGroup, FormLabel, Image } from 'react-bootstrap';
+import Api from '../Api';
 
 const toBase64 = file =>
 	new Promise((resolve, reject) => {
@@ -39,20 +40,10 @@ function Register({ onLogin }) {
 
 	async function onSubmit(e) {
 		e.preventDefault();
-		console.log('form deliverd');
 		console.log('form:', form);
 
 		// send request to server register new user
-		const res = await fetch('http://localhost:4000/auth/signup', {
-			method: 'POST',
-			body: JSON.stringify(form),
-			headers: {
-				'Content-Type': 'application/json',
-			},
-		});
-
-		//respon from server
-		const data = await res.json();
+		const data = await Api.addNewUser(form)
 		console.log('from server', data);
 
 		// save token local storage for next api calls

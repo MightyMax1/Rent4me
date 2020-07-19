@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Button, Container, Row, CardDeck, CardGroup, Col, Badge, Form } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import Api from '../Api';
 
 function Home(props) {
 	const [counter, setCounter] = useState(0);
@@ -16,16 +17,16 @@ function Home(props) {
 	useEffect(() => {
 		console.log('useEffect');
 
-		async function getProducts() {
-			const res = await fetch('http://localhost:4000/products/homePage');
-			const data = await res.json();
+		async function getDataHomePage() {
 
+			const data = await Api.getDataHomePage();
 			console.log('data', data);
+
 			setProducts(data.newProducts);
 			setCategories(data.categories);
 		}
 
-		getProducts(); // function call
+		getDataHomePage(); // function call
 	}, []);
 
 	function formatDate(date) {

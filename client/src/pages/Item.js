@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useHistory } from 'react-router-dom';
 import { Container, Row, Col, Carousel, Badge, Card, Image, Button, Alert } from 'react-bootstrap';
+import Api from '../Api';
 
 //date-time picker  https://github.com/YouCanBookMe/react-datetime
 import * as Datetime from 'react-datetime';
@@ -32,9 +33,7 @@ const Item = ({ user }) => {
 		console.log('useEffect...');
 
 		async function getItem() {
-			const res = await fetch(`http://localhost:4000/products/item/${id}`);
-			const data = await res.json();
-
+			const data = await Api.getItemById(id);
 			console.log('data', data);
 
 			console.log('item data', data.itemDetails);
@@ -61,22 +60,21 @@ const Item = ({ user }) => {
 		const totalPrice = dayDiffenece * Number(item.priceDay);
 
 		try {
-			const res = await fetch('http://localhost:4000/products/orderItem', {
-				method: 'POST',
-				body: JSON.stringify({
-					user: user,
-					startRent: startDate,
-					endRent: endDate,
-					item: item,
-					lessor: lessor,
-					totalPrice: totalPrice,
-				}),
-				headers: {
-					'Content-Type': 'application/json',
-				},
-			});
-			const data = await res.json();
-			console.log('data', data);
+
+			const body = {
+				user: user,
+				startRent: startDate,
+				endRent: endDate,
+				item: item,
+				lessor: lessor,
+				totalPrice: totalPrice,
+			};
+
+			console.log(body)
+
+			const data = Api.addNewOrder(body);
+			console.log('data order', data);
+
 			history.push('/private/lessee');
 		} catch (err) {
 			console.log('fetch new order err: ', err.message);
