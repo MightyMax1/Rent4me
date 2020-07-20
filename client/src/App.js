@@ -18,7 +18,7 @@ import Item from './pages/Item';
 import BookingLessor from './pages/BookingLessor';
 import CurrentLessor from './pages/CurrentLessor';
 import HistoryLessor from './pages/HistoryLessor';
-
+import Loading from './componets/Loading';
 import Api from './Api.js';
 
 function Messages(props) {
@@ -63,7 +63,9 @@ function App() {
 
 	if (loading) {
 		// wait until fetch current user finish
-		return 'loading...';
+		return (
+			<Loading />
+		)
 	}
 
 	return (
