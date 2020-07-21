@@ -19,8 +19,8 @@ async function myFetch(url, method, body) {
 
 function Api() {
 	return {
-		getOrdersByUserId: async userId => {
-			const data = await myFetch(`/products/ordersByUserId?id=${userId}`);
+		getOrdersByUserId: async (userId, userType) => {
+			const data = await myFetch(`/products/ordersByUserId?id=${userId}&userType=${userType}`);
 			return data;
 		},
 		getCurrentUser: async () => await myFetch('/auth/currentUser'),
@@ -30,7 +30,29 @@ function Api() {
 			return data;
 		},
 
-		approveBooking: async orderId => myFetch('/orders/approveBooking', 'POST', { orderId: orderId }),
+		approveBooking: async orderId => {
+			const userType = 'lessor';
+			const data = await myFetch('/orders/approveBooking', 'POST', { orderId, userType });
+			return data;
+		},
+		getCategories: async () => await myFetch('/products/categories'),
+
+		addNewItem: async body => await myFetch('/products/addItem', 'POST', body),
+
+		getProductsByCategoryId: async id => await myFetch(`/products/category/${id}`),
+
+		getDataHomePage: async () => await myFetch('/products/homePage'),
+
+		getItemById: async id => await myFetch(`/products/item/${id}`),
+
+		addNewUser: async body => await myFetch('/auth/signup', 'POST', body),
+
+		addNewOrder: async body => {
+			const data = await myFetch('/products/orderItem', 'POST', body);
+			return data;
+		}
+
+
 	};
 }
 

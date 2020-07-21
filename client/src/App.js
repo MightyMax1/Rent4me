@@ -18,7 +18,11 @@ import Item from './pages/Item';
 import BookingLessor from './pages/BookingLessor';
 import CurrentLessor from './pages/CurrentLessor';
 import HistoryLessor from './pages/HistoryLessor';
+import HistoryLessee from './pages/historyLessee';
+import BookingLessee from './pages/BookingLessee';
+import CurrentLessee from './pages/CurrentLessee';
 
+import Loading from './componets/Loading';
 import Api from './Api.js';
 
 function Messages(props) {
@@ -63,7 +67,9 @@ function App() {
 
 	if (loading) {
 		// wait until fetch current user finish
-		return 'loading...';
+		return (
+			<Loading />
+		)
 	}
 
 	return (
@@ -75,15 +81,24 @@ function App() {
 					<Route exact path="/addItem" component={AddItem} />
 					<Route exact path="/messages" component={Messages} />
 					<Route exact path="/help" component={Help} />
+					<Route exact path="/register">
+						<Register onLogin={onLogin} />
+					</Route>
+
+					{/* lessor section */}
 					<Route exact path="/private/lessor/booking">
 						<BookingLessor user={user} />
 					</Route>
 					<Route exact path="/private/lessor/current_rent" component={CurrentLessor} />
 					<Route exact path="/private/lessor/history" component={HistoryLessor} />
-					<Route path="/private" component={PrivatePage} />
-					<Route exact path="/register">
-						<Register onLogin={onLogin} />
+					{/* lessee section */}
+					<Route exact path="/private/lessee/booking">
+						<BookingLessee user={user} />
 					</Route>
+					<Route exact path="/private/lessee/history" component={HistoryLessee} />
+					<Route exact path="/private/lessee/current_rent" component={CurrentLessee} />
+
+					<Route path="/private" component={PrivatePage} />
 					<Route exact path="/category/:id">
 						<CategoryPage />
 					</Route>

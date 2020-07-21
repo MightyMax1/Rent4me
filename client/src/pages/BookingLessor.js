@@ -1,12 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, CardGroup, Card, Button, Modal } from 'react-bootstrap';
-
-import { differenceInCalendarDays } from 'date-fns';
-
+import { differenceInCalendarDays, format } from 'date-fns';
 import Api from '../Api';
 
-const r = {
+//test lessor login detail:
+//Shemar_Abshire89@hotmail.com
+//123
+
+const hebrewText = {
 	totalDays: 'סהכ ימים:',
+	totalPrice: 'סהכ רווח',
+	rentStart: 'תחילת שכירות',
+	retnEnd: 'סיום שכירות',
+	lessorName: 'שם שוכר',
+	status: 'סטטוס',
+	statusValue: {
+		NEW_BOOKING: 'לא מאושר',
+		CONFIRM_BOOKING: 'מאושר'
+	}
 };
 
 const STATUSES = {
@@ -17,33 +28,37 @@ const STATUSES = {
 };
 
 const BookingLessor = ({ user }) => {
-	const [show, setShow] = useState(false);
 	const [orders, setOrders] = useState([]);
-
-	const [selectedOrder, setSelectedOrder] = useState({});
+	const [show, setShow] = useState(false); // Modal toggle
+	const [selectedOrder, setSelectedOrder] = useState({});// selected by Modal onClick
 
 	const handleClose = () => setShow(false);
 	const handleShow = () => setShow(true);
 
 	const approveOrder = async () => {
+		// update(approve) order and return all orders of user(lessor)
 		const data = await Api.approveBooking(selectedOrder._id);
 		if (data.err) {
 			// handle error
 		}
-		setOrders(data);
+		console.log('updated order list:', data)
+		setOrders(data);//ser orders with updated list
 		handleClose();
 	};
 
 	useEffect(() => {
 		async function getOrdersByUserId() {
-			const data = await Api.getOrdersByUserId(user._id);
-
+			//get all orders where userID == lessorID
+			const userType = 'lessor';
+			const data = await Api.getOrdersByUserId(user._id, userType);
 			setOrders(data);
 			console.log('orders', orders);
 		}
 
 		getOrdersByUserId();
 	}, []);
+
+	const dateFormate = (date) => format(new Date(date), "dd-MM-yyyy HH:mm")
 
 	console.log('selectedOrder', selectedOrder);
 
@@ -61,12 +76,14 @@ const BookingLessor = ({ user }) => {
 					return (
 						<Col xl={3} md={3} sm={6} xs={6} key={order._id}>
 							<Card className="p-2" border={borderColor}>
-								<Card.Img variant="top" src="https://icon-library.com/images/img-icon/img-icon-14.jpg" />
+								<Card.Img variant="top" src={order.itemDetails.img} />
 								<Card.Body className="text-right">
-									<Card.Title>בקבוק בלי פקק1</Card.Title>
-									<p>התחלה: 18/7/20 17:30</p>
-									<p>סיום: 01/8/20 10:00</p>
-									<p>סטטוס: לא מאושר</p>
+									<Card.Title>{order.itemDetails.title}</Card.Title>
+									<p>{`${hebrewText.rentStart}: ${dateFormate(order.startRent)}`}</p>
+									<p>{`${hebrewText.retnEnd}: ${dateFormate(order.endRent)}`}</p>
+									<p>
+										{`${hebrewText.status}: ${hebrewText.statusValue[order.status]}`}
+									</p>
 								</Card.Body>
 								<Card.Footer className="text-center">
 									<Button
@@ -86,20 +103,24 @@ const BookingLessor = ({ user }) => {
 
 			<Modal show={show} onHide={handleClose}>
 				<Modal.Header closeButton>
-					<Modal.Title>בקבוק בלי פקק1</Modal.Title>
+					<Modal.Title>
+						{(selectedOrder.itemDetails) ? selectedOrder.itemDetails.title : ''}
+					</Modal.Title>
 				</Modal.Header>
 				<Modal.Body className="text-right">
 					<p>
-						{r.totalDays}
+						{hebrewText.totalDays}
 						{differenceInCalendarDays(new Date(selectedOrder.startRent), new Date(selectedOrder.endRent))}
 					</p>
-					<p>earn: {selectedOrder.totalPrice}</p>
-					<p>שם שוכר: יובל דיין</p>
+					<p>{`${hebrewText.totalPrice}: ${selectedOrder.totalPrice}`}</p>
+					<p>{`${hebrewText.lessorName}: ${selectedOrder.lesseeFullName}`}</p>
+					{/* TODO: message to lessee */}
 					<Button variant="secondary" onClick={handleClose}>
 						הודעה לשוכר
 					</Button>
 				</Modal.Body>
 				<Modal.Footer>
+					{/* TODO: delete order => message to lessee */}
 					<Button variant="danger" onClick={handleClose}>
 						בטל הזמנה
 					</Button>

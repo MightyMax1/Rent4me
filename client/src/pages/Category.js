@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Container, Row, Col, Badge, Card, CardDeck, CardGroup } from 'react-bootstrap';
+import Api from '../Api';
 
 const Category = () => {
 	let { id } = useParams();
@@ -13,10 +14,9 @@ const Category = () => {
 		console.log('useEffect...');
 
 		async function getProducts() {
-			const res = await fetch(`http://localhost:4000/products/category/${id}`);
-			const data = await res.json();
 
-			console.log('data', data);
+			const data = await Api.getProductsByCategoryId(id)
+			console.log('products by cat id', data);
 
 			setProducts(data.itemsByCategory);
 			setCategoryTitle(data.categoryTitle)

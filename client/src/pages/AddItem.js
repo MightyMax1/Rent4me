@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Form, FormGroup, FormLabel, Button, Container, Col, Row, Image } from 'react-bootstrap';
 
+import Api from '../Api';
+
 //TODO: add user id in serverSide (db->products.js)
 
 // convert file to base64
@@ -26,11 +28,14 @@ function AddItem() {
 
 	useEffect(() => {
 		async function getCategories() {
-			const res = await fetch('http://localhost:4000/products/categories');
-			const data = await res.json();
+			const data = await Api.getCategories();
+			if (data.err) {
+				// handle error
+				console.log('getCategories', data.err.msg)
+			}
 
 			console.log('data', data);
-			setCategories(data.categories);
+			setCategories(data['categories']);
 		}
 		getCategories(); // function call
 	}, []);
@@ -65,16 +70,11 @@ function AddItem() {
 		event.preventDefault();
 
 		// send request to server add new product
-		const res = await fetch('http://localhost:4000/products/addItem', {
-			method: 'POST',
-			body: JSON.stringify(form),
-			headers: {
-				'Content-Type': 'application/json',
-				token:
-					'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im15ZW1haWwiLCJpYXQiOjE1OTIzMTY4OTB9.Al1XPGmfzjZOELnKigIPBFNEZ0Nbfi3_J2iNLUFADNM',
-			},
-		});
-		const data = await res.json();
+		const data = await Api.addNewItem();
+		if (data.err) {
+			// handle error
+			console.log('getCategories', data.err.msg)
+		}
 		console.log('data', data);
 
 		// use history instance for redirect to private page
