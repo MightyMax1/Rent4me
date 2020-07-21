@@ -41,7 +41,7 @@ const BookingLessor = ({ user }) => {
 		if (data.err) {
 			// handle error
 		}
-		console.log(data)
+		console.log('updated order list:', data)
 		setOrders(data);//ser orders with updated list
 		handleClose();
 	};

@@ -92,7 +92,9 @@ function App() {
 					<Route exact path="/private/lessor/current_rent" component={CurrentLessor} />
 					<Route exact path="/private/lessor/history" component={HistoryLessor} />
 					{/* lessee section */}
-					<Route exact path="/private/lessee/booking" component={BookingLessee} />
+					<Route exact path="/private/lessee/booking">
+						<BookingLessee user={user} />
+					</Route>
 					<Route exact path="/private/lessee/history" component={HistoryLessee} />
 					<Route exact path="/private/lessee/current_rent" component={CurrentLessee} />
 
