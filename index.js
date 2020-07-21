@@ -59,14 +59,14 @@ app.get('/auth/currentUser', privateApi, async (req, res) => {
 	}
 });
 
-// // approve order
+// // approve order by lessor
 app.post('/orders/approveBooking', privateApi, async (req, res) => {
 	try {
 		const { orderId } = req.body;
 
-
+		//update order status
+		//and return all orders from user(lessor)
 		const orders = await db.updateOrderStatus(orderId, STATUSES.CONFIRM_BOOKING, req.user._id.toString());
-		console.log('orders', orders);
 		res.json(orders);
 	} catch (error) {
 		console.log('approveBooking err', err.message);

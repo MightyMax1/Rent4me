@@ -17,7 +17,7 @@ async function getProductsAndCategories() {
 		const categories = await collection_categories.find({}).toArray();
 
 		return { categories, newProducts };
-	} catch (error) {}
+	} catch (error) { }
 }
 
 async function getProductsByCategoryId(id) {
@@ -88,7 +88,7 @@ async function getCategories() {
 		const categories = await collection_categories.find({}).toArray();
 
 		return { categories };
-	} catch (error) {}
+	} catch (error) { }
 }
 
 async function AddProduct(product) {
@@ -121,10 +121,10 @@ async function addOrder(order) {
 		// define users collection
 		ordersCollection = mongoClient.db('rentme').collection('orders');
 
-		// insert new products
+		// insert new order
 		const result = await ordersCollection.insertOne(order);
 
-		// return the product item (with inserted _id)
+		// return the order details from db (with inserted _id)
 		return result.ops[0];
 	} catch (error) {
 		console.log('AddProduct err', err.message);

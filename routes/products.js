@@ -105,20 +105,27 @@ router.post('/orderItem', async (req, res) => {
 
 		const { user, startRent, endRent, item, lessor, totalPrice } = req.body;
 
-		// add product (req.body) object to database
+		// add order (req.body) object to database
 		const order = {
 			lessorId: lessor._id,
 			lesseeId: user._id,
+			lesseeFullName: user.firstName + ' ' + user.lastName,
 			itemId: item._id,
 			startRent,
 			endRent,
 			totalPrice,
 			status: STATUSES.NEW_BOOKING,
 			createdAt: Date(),
+			itemDetails: {
+				title: item.title,
+				img: item.mainImg,
+				price_hour: item.priceHour,
+				price_day: item.priceDay,
+			},
 		};
-		const newProduct = await db.addOrder(order);
+		const newOrder = await db.addOrder(order);
 
-		res.json(newProduct);
+		res.json(newOrder);
 	} catch (err) {
 		console.log('get products err: ', err.message);
 		res.status(500).json({
@@ -127,7 +134,7 @@ router.post('/orderItem', async (req, res) => {
 	}
 });
 
-// get all order by user id
+// get all order by user id (*user => lessor)
 router.get('/ordersByUserId', async (req, res) => {
 	try {
 		// read toke from request headers
