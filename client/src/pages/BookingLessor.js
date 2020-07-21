@@ -49,7 +49,8 @@ const BookingLessor = ({ user }) => {
 	useEffect(() => {
 		async function getOrdersByUserId() {
 			//get all orders where userID == lessorID
-			const data = await Api.getOrdersByUserId(user._id);
+			const userType = 'lessor';
+			const data = await Api.getOrdersByUserId(user._id, userType);
 			setOrders(data);
 			console.log('orders', orders);
 		}

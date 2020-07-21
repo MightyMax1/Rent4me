@@ -134,18 +134,16 @@ router.post('/orderItem', async (req, res) => {
 	}
 });
 
-// get all order by user id (*user => lessor)
+// get all order by user id and type
 router.get('/ordersByUserId', async (req, res) => {
 	try {
-		// read toke from request headers
+		//TODO: read toke from request headers
 
-		const { id } = req.query;
-
-		const newProduct = await db.getOrdersByUserId(id);
-
+		const { id, userType } = req.query;
+		const newProduct = await db.getOrdersByUserId(id, userType);
 		res.json(newProduct);
 	} catch (err) {
-		console.log('get products err: ', err.message);
+		console.log('get ordersByUserId err: ', err.message);
 		res.status(500).json({
 			err: err.message,
 		});

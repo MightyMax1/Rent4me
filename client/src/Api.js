@@ -19,8 +19,8 @@ async function myFetch(url, method, body) {
 
 function Api() {
 	return {
-		getOrdersByUserId: async userId => {
-			const data = await myFetch(`/products/ordersByUserId?id=${userId}`);
+		getOrdersByUserId: async (userId, userType) => {
+			const data = await myFetch(`/products/ordersByUserId?id=${userId}&userType=${userType}`);
 			return data;
 		},
 		getCurrentUser: async () => await myFetch('/auth/currentUser'),
@@ -31,7 +31,8 @@ function Api() {
 		},
 
 		approveBooking: async orderId => {
-			const data = await myFetch('/orders/approveBooking', 'POST', { orderId: orderId });
+			const userType = 'lessor';
+			const data = await myFetch('/orders/approveBooking', 'POST', { orderId, userType });
 			return data;
 		},
 		getCategories: async () => await myFetch('/products/categories'),

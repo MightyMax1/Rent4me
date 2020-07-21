@@ -132,38 +132,43 @@ async function addOrder(order) {
 }
 
 // Update order status
-async function updateOrderStatus(orderId, status, userId) {
+async function updateOrderStatus(orderId, status, userId, userType) {
 	try {
 		// get mongo connection
 		const mongoClient = await getMongoClient();
 		// define users collection
 		ordersCollection = mongoClient.db('rentme').collection('orders');
-
 		// insert new products
 		await ordersCollection.updateOne({ _id: ObjectID(orderId) }, { $set: { status: status } });
-		const orders = await getOrdersByUserId(userId);
+		console.log(`update order status by: ${userType} to ${status}`);
+		const orders = await getOrdersByUserId(userId, userType);
 		return orders;
 	} catch (error) {
 		console.log('AddProduct err', err.message);
 	}
 }
 
-async function getOrdersByUserId(userId) {
+async function getOrdersByUserId(userId, userType) {
 	try {
+
 		// get mongo connection
 		const mongoClient = await getMongoClient();
 		// define users collection
 		ordersCollection = mongoClient.db('rentme').collection('orders');
 
-		// insert new products
-		const orders = await ordersCollection.find({ lessorId: userId }).toArray();
+		// find orders by userId and by type of user request
+		let orders;
+		if (userType == 'lessor') {
+			console.log('req orders db by: ', userType);
+			orders = await ordersCollection.find({ lessorId: userId }).toArray();
+		} else {
+			console.log('req orders db by: ', userType);
+			orders = await ordersCollection.find({ lesseeId: userId }).toArray();
+		}
 
-		console.log('orders', typeof userId);
-
-		// return the product item (with inserted _id)
 		return orders;
 	} catch (error) {
-		console.log('AddProduct err', err.message);
+		console.log('getOrders err', err.message);
 	}
 }
 
