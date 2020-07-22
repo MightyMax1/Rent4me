@@ -70,7 +70,7 @@ function AddItem() {
 		event.preventDefault();
 
 		// send request to server add new product
-		const data = await Api.addNewItem();
+		const data = await Api.addNewItem(form);
 		if (data.err) {
 			// handle error
 			console.log('getCategories', data.err.msg)

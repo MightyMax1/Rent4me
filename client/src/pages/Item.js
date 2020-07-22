@@ -62,7 +62,7 @@ const Item = ({ user }) => {
 		try {
 
 			const body = {
-				user: user,
+				user: user, //lessee
 				startRent: startDate,
 				endRent: endDate,
 				item: item,
@@ -70,7 +70,7 @@ const Item = ({ user }) => {
 				totalPrice: totalPrice,
 			};
 
-			console.log(body)
+			console.log('submitted order obj: ', body)
 
 			const data = Api.addNewOrder(body);
 			console.log('data order', data);
@@ -101,7 +101,7 @@ const Item = ({ user }) => {
 							<Card.Text>
 								<p>סה"כ מוצרים: 123</p>
 								<p>סה"כ עסקאות: 123</p>
-								<p>משתמש פעיל מתאריך {formatDate(lessor.registerAt)}</p>
+								<p>משתמש פעיל מתאריך {formatDate(lessor.createdAt)}</p>
 							</Card.Text>
 							<Button variant="primary" size="md" block>
 								שלח הודעה
