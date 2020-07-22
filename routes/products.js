@@ -87,7 +87,7 @@ router.post('/addItem', async (req, res) => {
 		console.log('user', decoded);
 
 		// add product (req.body) object to database
-		const newProduct = await db.AddProduct(req.body);
+		const newProduct = await db.AddProduct(req.body, decoded.email);
 
 		res.json(newProduct);
 	} catch (err) {
@@ -137,7 +137,6 @@ router.post('/orderItem', async (req, res) => {
 // get all order by user id and type
 router.get('/ordersByUserId', async (req, res) => {
 	try {
-		//TODO: read toke from request headers
 
 		const { id, userType } = req.query;
 		const newProduct = await db.getOrdersByUserId(id, userType);

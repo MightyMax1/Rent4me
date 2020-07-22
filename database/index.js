@@ -51,11 +51,8 @@ async function getItemById(id) {
 		const ObjectId = require('mongodb').ObjectID;
 		// find item by id
 		const itemDetails = await collection_items.findOne({ _id: ObjectId(id) });
-		//find lessor own the item
-		//TODO: delete the fake and uncomment the lessorId
-		const fakeUserId = '5ee8a3e45fe4e235b8228cc2';
-		//const lessorId = itemDetails.userId
-		const lessor = await collection_users.findOne({ _id: ObjectId(fakeUserId) });
+
+		const lessor = await collection_users.findOne({ _id: ObjectId(itemDetails.userId) });
 
 		return { itemDetails, lessor };
 	} catch (error) {
@@ -91,16 +88,17 @@ async function getCategories() {
 	} catch (error) { }
 }
 
-async function AddProduct(product) {
+async function AddProduct(product, userEmail) {
 	try {
 		// get mongo connection
 		const mongoClient = await getMongoClient();
 		// define users collection
 		collection_items = mongoClient.db('rentme').collection('items');
 
+		const user = await getUserByEmail(userEmail);
 		//add additional data to item
 		product['createdAt'] = Date();
-		product['userId'] = 'userId toDo...';
+		product['userId'] = user._id;
 
 		// insert new products
 		const result = await collection_items.insertOne(product);
