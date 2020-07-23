@@ -12,10 +12,10 @@ const STATUSES = {
 
 const hebrewText = {
     totalDays: 'סהכ ימים:',
-    totalPrice: 'סהכ רווח',
+    totalPrice: 'סהכ לתשלום',
     rentStart: 'תחילת שכירות',
     retnEnd: 'סיום שכירות',
-    lessorName: 'שם שוכר',
+    lessorName: 'שם משכיר',
     status: 'סטטוס',
     statusValue: {
         NEW_BOOKING: 'לא מאושר',
@@ -25,13 +25,29 @@ const hebrewText = {
 
 const BookingLessee = ({ user }) => {
     const [orders, setOrders] = useState([]);
+    const [show, setShow] = useState(false); // Modal toggle
+    const [selectedOrder, setSelectedOrder] = useState({});// selected by Modal onClick
+
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+
+    //confirm receving item, change status 
+    const confirmOrder = async (orderID) => {
+        const userType = 'lessee';
+        const data = await Api.confirmReceivingItem(orderID, userType);
+        console.log(`orders set with data:`, data)
+        //TODO: add filter to data by status
+        setOrders(data);
+
+    }
 
     useEffect(() => {
         async function getOrdersByUserId() {
             const userType = 'lessee';
             const data = await Api.getOrdersByUserId(user._id, userType);
-            setOrders(data);
             console.log(`orders set with data:`, data)
+            //TODO: add filter to data by status
+            setOrders(data);
         }
 
         getOrdersByUserId();
@@ -62,13 +78,18 @@ const BookingLessee = ({ user }) => {
                                     </p>
                                 </Card.Body>
                                 <Card.Footer className="text-center">
-                                    {/* TODO: on cancel delete order and send message to lessor */}
+                                    <Button onClick={() => confirmOrder(order._id)} variant='success' block >
+                                        אישור קבלת מוצר
+                                    </Button>
                                     <Button
-                                        variant="danger"
+                                        variant="info"
+                                        block
                                         onClick={() => {
-
-                                        }}>
-                                        ביטול הזמנה
+                                            setSelectedOrder(order);
+                                            handleShow();
+                                        }}
+                                    >
+                                        פרטים ופעולות נוספות
 									</Button>
                                 </Card.Footer>
                             </Card>
@@ -76,6 +97,32 @@ const BookingLessee = ({ user }) => {
                     );
                 })}
             </CardGroup>
+
+            <Modal show={show} onHide={handleClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>
+                        {(selectedOrder.itemDetails) ? selectedOrder.itemDetails.title : ''}
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body className="text-right">
+                    <p>
+                        {hebrewText.totalDays}
+                        {differenceInCalendarDays(new Date(selectedOrder.startRent), new Date(selectedOrder.endRent))}
+                    </p>
+                    <p>{`${hebrewText.totalPrice}: ${selectedOrder.totalPrice}`}</p>
+                    <p>{`${hebrewText.lessorName}: ${selectedOrder.lesseeFullName}`}</p>
+                    {/* TODO: message to lessee */}
+                    <Button variant="secondary" onClick={handleClose}>
+                        הודעה לשוכר
+					</Button>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="danger" onClick={handleClose}>
+                        בטל הזמנה
+					</Button>
+                </Modal.Footer>
+            </Modal>
+
         </Container>
     );
 
