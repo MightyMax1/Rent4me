@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, CardGroup, Card, Button, Modal } from 'react-bootstrap';
+import { Container, Row, Col, CardGroup, Card, Button, Modal, Badge } from 'react-bootstrap';
 import { differenceInCalendarDays, format } from 'date-fns';
 import Api from '../Api';
 
@@ -31,12 +31,12 @@ const BookingLessee = ({ user }) => {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
-    //confirm receving item, change status 
+    //confirm receving item 
     const confirmOrder = async (orderID) => {
         const userType = 'lessee';
         const data = await Api.confirmReceivingItem(orderID, userType);
-        console.log(`orders set with data:`, data)
-        //TODO: add filter to data by status
+        console.log(`confirmOrder, orders set with data:`, data)
+
         setOrders(data);
 
     }
@@ -45,7 +45,7 @@ const BookingLessee = ({ user }) => {
         async function getOrdersByUserId() {
             const userType = 'lessee';
             const data = await Api.getOrdersByUserId(user._id, userType);
-            console.log(`orders set with data:`, data)
+            console.log(`use effect , orders set with data:`, data)
             //TODO: add filter to data by status
             setOrders(data);
         }
@@ -64,7 +64,9 @@ const BookingLessee = ({ user }) => {
                         NEW_BOOKING: 'danger',
                         CONFIRM_BOOKING: 'success',
                     };
+                    const variantByStatus = (order.status == STATUSES.NEW_BOOKING) ? "warning" : "success";
                     const borderColor = borders[order.status];
+                    const disableConfirmBTN = (order.status == STATUSES.NEW_BOOKING) ? true : false;
                     return (
                         <Col xl={3} md={3} sm={6} xs={6} key={order._id}>
                             <Card className="p-2" border={borderColor}>
@@ -74,11 +76,16 @@ const BookingLessee = ({ user }) => {
                                     <p>{`${hebrewText.rentStart}: ${dateFormate(order.startRent)}`}</p>
                                     <p>{`${hebrewText.retnEnd}: ${dateFormate(order.endRent)}`}</p>
                                     <p>
-                                        {`${hebrewText.status}: ${hebrewText.statusValue[order.status]}`}
+                                        {`${hebrewText.status}:`}
+                                        <Badge variant={variantByStatus}>{hebrewText.statusValue[order.status]}</Badge>
                                     </p>
                                 </Card.Body>
                                 <Card.Footer className="text-center">
-                                    <Button onClick={() => confirmOrder(order._id)} variant='success' block >
+                                    <Button
+                                        onClick={() => confirmOrder(order._id)}
+                                        disabled={disableConfirmBTN}
+                                        variant={variantByStatus}
+                                        block >
                                         אישור קבלת מוצר
                                     </Button>
                                     <Button
@@ -122,7 +129,6 @@ const BookingLessee = ({ user }) => {
 					</Button>
                 </Modal.Footer>
             </Modal>
-
         </Container>
     );
 

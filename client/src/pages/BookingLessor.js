@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, CardGroup, Card, Button, Modal } from 'react-bootstrap';
+import { Container, Row, Col, CardGroup, Card, Button, Modal, Badge } from 'react-bootstrap';
 import { differenceInCalendarDays, format } from 'date-fns';
 import Api from '../Api';
 
@@ -15,7 +15,7 @@ const hebrewText = {
 	lessorName: 'שם שוכר',
 	status: 'סטטוס',
 	statusValue: {
-		NEW_BOOKING: 'לא מאושר',
+		NEW_BOOKING: 'מחכה לאישור שלך',
 		CONFIRM_BOOKING: 'מאושר'
 	}
 };
@@ -51,6 +51,7 @@ const BookingLessor = ({ user }) => {
 			//get all orders where userID == lessorID
 			const userType = 'lessor';
 			const data = await Api.getOrdersByUserId(user._id, userType);
+			//TODO: add filter to data by status
 			setOrders(data);
 			console.log('orders', orders);
 		}
@@ -73,6 +74,7 @@ const BookingLessor = ({ user }) => {
 						CONFIRM_BOOKING: 'success',
 					};
 					const borderColor = borders[order.status];
+					const variantByStatus = (order.status == STATUSES.NEW_BOOKING) ? "warning" : "success";
 					return (
 						<Col xl={3} md={3} sm={6} xs={6} key={order._id}>
 							<Card className="p-2" border={borderColor}>
@@ -82,7 +84,8 @@ const BookingLessor = ({ user }) => {
 									<p>{`${hebrewText.rentStart}: ${dateFormate(order.startRent)}`}</p>
 									<p>{`${hebrewText.retnEnd}: ${dateFormate(order.endRent)}`}</p>
 									<p>
-										{`${hebrewText.status}: ${hebrewText.statusValue[order.status]}`}
+										{`${hebrewText.status}:`}
+										<Badge variant={variantByStatus}>{hebrewText.statusValue[order.status]}</Badge>
 									</p>
 								</Card.Body>
 								<Card.Footer className="text-center">
