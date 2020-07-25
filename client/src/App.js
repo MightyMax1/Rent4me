@@ -21,13 +21,10 @@ import HistoryLessor from './pages/HistoryLessor';
 import HistoryLessee from './pages/historyLessee';
 import BookingLessee from './pages/BookingLessee';
 import CurrentLessee from './pages/CurrentLessee';
+import MessagesList from './pages/MessagesList';
 
 import Loading from './componets/Loading';
 import Api from './Api.js';
-
-function Messages(props) {
-	return 'Messages';
-}
 
 function App() {
 	const [user, setUser] = useState(null);
@@ -79,8 +76,10 @@ function App() {
 				<Switch>
 					<Route exact path="/" component={Home} />
 					<Route exact path="/addItem" component={AddItem} />
-					<Route exact path="/messages" component={Messages} />
 					<Route exact path="/help" component={Help} />
+					<Route exact path="/messages">
+						<MessagesList user={user} />
+					</Route>
 					<Route exact path="/register">
 						<Register onLogin={onLogin} />
 					</Route>
