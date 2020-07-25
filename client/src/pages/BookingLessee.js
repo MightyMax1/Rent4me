@@ -35,9 +35,9 @@ const BookingLessee = ({ user }) => {
     const confirmOrder = async (orderID) => {
         const userType = 'lessee';
         const data = await Api.confirmReceivingItem(orderID, userType);
-        console.log(`confirmOrder, orders set with data:`, data)
-
-        setOrders(data);
+        console.log(`confirmOrder, data:`, data)
+        const orders = filterOrders(data);
+        setOrders(orders);
 
     }
 
@@ -45,15 +45,22 @@ const BookingLessee = ({ user }) => {
         async function getOrdersByUserId() {
             const userType = 'lessee';
             const data = await Api.getOrdersByUserId(user._id, userType);
-            console.log(`use effect , orders set with data:`, data)
-            //TODO: add filter to data by status
-            setOrders(data);
+            console.log(`use effect , data:`, data)
+            const orders = filterOrders(data);
+            setOrders(orders);
         }
 
         getOrdersByUserId();
     }, []);
 
     const dateFormate = (date) => format(new Date(date), "dd-MM-yyyy HH:mm")
+
+    const filterOrders = (orders) => {
+        const filtredOrders = orders.filter(order => {
+            return order.status == STATUSES.NEW_BOOKING || order.status == STATUSES.CONFIRM_BOOKING;
+        })
+        return filtredOrders;
+    }
 
     return (
         <Container>

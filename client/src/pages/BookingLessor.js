@@ -41,8 +41,9 @@ const BookingLessor = ({ user }) => {
 		if (data.err) {
 			// handle error
 		}
-		console.log('updated order list:', data)
-		setOrders(data);//ser orders with updated list
+		console.log('approveOrder, data:', data)
+		const orders = filterOrders(data);
+		setOrders(orders);//set orders with updated list
 		handleClose();
 	};
 
@@ -51,9 +52,10 @@ const BookingLessor = ({ user }) => {
 			//get all orders where userID == lessorID
 			const userType = 'lessor';
 			const data = await Api.getOrdersByUserId(user._id, userType);
-			//TODO: add filter to data by status
-			setOrders(data);
-			console.log('orders', orders);
+			console.log(`use effect , data:`, data)
+			const orders = filterOrders(data);
+			setOrders(orders);
+
 		}
 
 		getOrdersByUserId();
@@ -61,7 +63,12 @@ const BookingLessor = ({ user }) => {
 
 	const dateFormate = (date) => format(new Date(date), "dd-MM-yyyy HH:mm")
 
-	console.log('selectedOrder', selectedOrder);
+	const filterOrders = (orders) => {
+		const filtredOrders = orders.filter(order => {
+			return order.status == STATUSES.NEW_BOOKING || order.status == STATUSES.CONFIRM_BOOKING;
+		})
+		return filtredOrders;
+	}
 
 	return (
 		<Container>
