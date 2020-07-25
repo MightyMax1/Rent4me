@@ -3,10 +3,6 @@ import { Container, Row, Col, CardGroup, Card, Button, Modal, Badge } from 'reac
 import { differenceInCalendarDays, format } from 'date-fns';
 import Api from '../Api';
 
-//test lessor login detail:
-//Shemar_Abshire89@hotmail.com
-//123
-
 const hebrewText = {
 	totalDays: 'סהכ ימים:',
 	totalPrice: 'סהכ רווח',
