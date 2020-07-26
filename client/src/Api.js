@@ -23,10 +23,9 @@ function Api() {
 			const data = await myFetch(`/products/ordersByUserId?id=${userId}&userType=${userType}`);
 			return data;
 		},
-		getCurrentUser: async () => await myFetch('/auth/currentUser'),
 
-		login: async body => {
-			const data = await myFetch('/auth/login', 'POST', body);
+		confirmReceivingItem: async (orderId, userType) => {
+			const data = await myFetch('/orders/confirmReceiveItem', 'POST', { userType, orderId });
 			return data;
 		},
 
@@ -35,9 +34,15 @@ function Api() {
 			const data = await myFetch('/orders/approveBooking', 'POST', { orderId, userType });
 			return data;
 		},
-		getCategories: async () => await myFetch('/products/categories'),
 
-		addNewItem: async body => await myFetch('/products/addItem', 'POST', body),
+		login: async body => {
+			const data = await myFetch('/auth/login', 'POST', body);
+			return data;
+		},
+
+		getCurrentUser: async () => await myFetch('/auth/currentUser'),
+
+		getCategories: async () => await myFetch('/products/categories'),
 
 		getProductsByCategoryId: async id => await myFetch(`/products/category/${id}`),
 
@@ -45,13 +50,14 @@ function Api() {
 
 		getItemById: async id => await myFetch(`/products/item/${id}`),
 
+		addNewItem: async body => await myFetch('/products/addItem', 'POST', body),
+
 		addNewUser: async body => await myFetch('/auth/signup', 'POST', body),
 
 		addNewOrder: async body => {
 			const data = await myFetch('/products/orderItem', 'POST', body);
 			return data;
-		}
-
+		},
 
 	};
 }

@@ -21,13 +21,10 @@ import HistoryLessor from './pages/HistoryLessor';
 import HistoryLessee from './pages/historyLessee';
 import BookingLessee from './pages/BookingLessee';
 import CurrentLessee from './pages/CurrentLessee';
+import MessagesList from './pages/MessagesList';
 
 import Loading from './componets/Loading';
 import Api from './Api.js';
-
-function Messages(props) {
-	return 'Messages';
-}
 
 function App() {
 	const [user, setUser] = useState(null);
@@ -79,8 +76,10 @@ function App() {
 				<Switch>
 					<Route exact path="/" component={Home} />
 					<Route exact path="/addItem" component={AddItem} />
-					<Route exact path="/messages" component={Messages} />
 					<Route exact path="/help" component={Help} />
+					<Route exact path="/messages">
+						<MessagesList user={user} />
+					</Route>
 					<Route exact path="/register">
 						<Register onLogin={onLogin} />
 					</Route>
@@ -89,14 +88,22 @@ function App() {
 					<Route exact path="/private/lessor/booking">
 						<BookingLessor user={user} />
 					</Route>
-					<Route exact path="/private/lessor/current_rent" component={CurrentLessor} />
-					<Route exact path="/private/lessor/history" component={HistoryLessor} />
+					<Route exact path="/private/lessor/current_rent">
+						<CurrentLessor user={user} />
+					</Route>
+					<Route exact path="/private/lessor/history">
+						<HistoryLessor user={user} />
+					</Route>
 					{/* lessee section */}
 					<Route exact path="/private/lessee/booking">
 						<BookingLessee user={user} />
 					</Route>
-					<Route exact path="/private/lessee/history" component={HistoryLessee} />
-					<Route exact path="/private/lessee/current_rent" component={CurrentLessee} />
+					<Route exact path="/private/lessee/current_rent">
+						<CurrentLessee user={user} />
+					</Route>
+					<Route exact path="/private/lessee/history">
+						<HistoryLessee user={user} />
+					</Route>
 
 					<Route path="/private" component={PrivatePage} />
 					<Route exact path="/category/:id">

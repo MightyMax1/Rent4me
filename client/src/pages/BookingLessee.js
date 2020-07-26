@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, CardGroup, Card, Button, Modal } from 'react-bootstrap';
+import { Container, Row, Col, CardGroup, Card, Button, Modal, Badge } from 'react-bootstrap';
 import { differenceInCalendarDays, format } from 'date-fns';
 import Api from '../Api';
 
@@ -12,10 +12,10 @@ const STATUSES = {
 
 const hebrewText = {
     totalDays: 'סהכ ימים:',
-    totalPrice: 'סהכ רווח',
+    totalPrice: 'סהכ לתשלום',
     rentStart: 'תחילת שכירות',
     retnEnd: 'סיום שכירות',
-    lessorName: 'שם שוכר',
+    lessorName: 'שם משכיר',
     status: 'סטטוס',
     statusValue: {
         NEW_BOOKING: 'לא מאושר',
@@ -25,19 +25,42 @@ const hebrewText = {
 
 const BookingLessee = ({ user }) => {
     const [orders, setOrders] = useState([]);
+    const [show, setShow] = useState(false); // Modal toggle
+    const [selectedOrder, setSelectedOrder] = useState({});// selected by Modal onClick
+
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+
+    //confirm receving item 
+    const confirmOrder = async (orderID) => {
+        const userType = 'lessee';
+        const data = await Api.confirmReceivingItem(orderID, userType);
+        console.log(`confirmOrder, data:`, data)
+        const orders = filterOrders(data);
+        setOrders(orders);
+
+    }
 
     useEffect(() => {
         async function getOrdersByUserId() {
             const userType = 'lessee';
             const data = await Api.getOrdersByUserId(user._id, userType);
-            setOrders(data);
-            console.log(`orders set with data:`, data)
+            console.log(`use effect , data:`, data)
+            const orders = filterOrders(data);
+            setOrders(orders);
         }
 
         getOrdersByUserId();
     }, []);
 
     const dateFormate = (date) => format(new Date(date), "dd-MM-yyyy HH:mm")
+
+    const filterOrders = (orders) => {
+        const filtredOrders = orders.filter(order => {
+            return order.status == STATUSES.NEW_BOOKING || order.status == STATUSES.CONFIRM_BOOKING;
+        })
+        return filtredOrders;
+    }
 
     return (
         <Container>
@@ -48,7 +71,9 @@ const BookingLessee = ({ user }) => {
                         NEW_BOOKING: 'danger',
                         CONFIRM_BOOKING: 'success',
                     };
+                    const variantByStatus = (order.status == STATUSES.NEW_BOOKING) ? "warning" : "success";
                     const borderColor = borders[order.status];
+                    const disableConfirmBTN = (order.status == STATUSES.NEW_BOOKING) ? true : false;
                     return (
                         <Col xl={3} md={3} sm={6} xs={6} key={order._id}>
                             <Card className="p-2" border={borderColor}>
@@ -58,17 +83,27 @@ const BookingLessee = ({ user }) => {
                                     <p>{`${hebrewText.rentStart}: ${dateFormate(order.startRent)}`}</p>
                                     <p>{`${hebrewText.retnEnd}: ${dateFormate(order.endRent)}`}</p>
                                     <p>
-                                        {`${hebrewText.status}: ${hebrewText.statusValue[order.status]}`}
+                                        {`${hebrewText.status}:`}
+                                        <Badge variant={variantByStatus}>{hebrewText.statusValue[order.status]}</Badge>
                                     </p>
                                 </Card.Body>
                                 <Card.Footer className="text-center">
-                                    {/* TODO: on cancel delete order and send message to lessor */}
                                     <Button
-                                        variant="danger"
+                                        onClick={() => confirmOrder(order._id)}
+                                        disabled={disableConfirmBTN}
+                                        variant={variantByStatus}
+                                        block >
+                                        אישור קבלת מוצר
+                                    </Button>
+                                    <Button
+                                        variant="info"
+                                        block
                                         onClick={() => {
-
-                                        }}>
-                                        ביטול הזמנה
+                                            setSelectedOrder(order);
+                                            handleShow();
+                                        }}
+                                    >
+                                        פרטים ופעולות נוספות
 									</Button>
                                 </Card.Footer>
                             </Card>
@@ -76,6 +111,31 @@ const BookingLessee = ({ user }) => {
                     );
                 })}
             </CardGroup>
+
+            <Modal show={show} onHide={handleClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>
+                        {(selectedOrder.itemDetails) ? selectedOrder.itemDetails.title : ''}
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body className="text-right">
+                    <p>
+                        {hebrewText.totalDays}
+                        {differenceInCalendarDays(new Date(selectedOrder.startRent), new Date(selectedOrder.endRent))}
+                    </p>
+                    <p>{`${hebrewText.totalPrice}: ${selectedOrder.totalPrice}`}</p>
+                    <p>{`${hebrewText.lessorName}: ${selectedOrder.lesseeFullName}`}</p>
+                    {/* TODO: message to lessee */}
+                    <Button variant="secondary" onClick={handleClose}>
+                        הודעה לשוכר
+					</Button>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="danger" onClick={handleClose}>
+                        בטל הזמנה
+					</Button>
+                </Modal.Footer>
+            </Modal>
         </Container>
     );
 

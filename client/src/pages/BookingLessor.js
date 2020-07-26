@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, CardGroup, Card, Button, Modal } from 'react-bootstrap';
+import { Container, Row, Col, CardGroup, Card, Button, Modal, Badge } from 'react-bootstrap';
 import { differenceInCalendarDays, format } from 'date-fns';
 import Api from '../Api';
-
-//test lessor login detail:
-//Shemar_Abshire89@hotmail.com
-//123
 
 const hebrewText = {
 	totalDays: 'סהכ ימים:',
@@ -15,7 +11,7 @@ const hebrewText = {
 	lessorName: 'שם שוכר',
 	status: 'סטטוס',
 	statusValue: {
-		NEW_BOOKING: 'לא מאושר',
+		NEW_BOOKING: 'מחכה לאישור שלך',
 		CONFIRM_BOOKING: 'מאושר'
 	}
 };
@@ -41,8 +37,9 @@ const BookingLessor = ({ user }) => {
 		if (data.err) {
 			// handle error
 		}
-		console.log('updated order list:', data)
-		setOrders(data);//ser orders with updated list
+		console.log('approveOrder, data:', data)
+		const orders = filterOrders(data);
+		setOrders(orders);//set orders with updated list
 		handleClose();
 	};
 
@@ -51,8 +48,10 @@ const BookingLessor = ({ user }) => {
 			//get all orders where userID == lessorID
 			const userType = 'lessor';
 			const data = await Api.getOrdersByUserId(user._id, userType);
-			setOrders(data);
-			console.log('orders', orders);
+			console.log(`use effect , data:`, data)
+			const orders = filterOrders(data);
+			setOrders(orders);
+
 		}
 
 		getOrdersByUserId();
@@ -60,7 +59,12 @@ const BookingLessor = ({ user }) => {
 
 	const dateFormate = (date) => format(new Date(date), "dd-MM-yyyy HH:mm")
 
-	console.log('selectedOrder', selectedOrder);
+	const filterOrders = (orders) => {
+		const filtredOrders = orders.filter(order => {
+			return order.status == STATUSES.NEW_BOOKING || order.status == STATUSES.CONFIRM_BOOKING;
+		})
+		return filtredOrders;
+	}
 
 	return (
 		<Container>
@@ -73,6 +77,7 @@ const BookingLessor = ({ user }) => {
 						CONFIRM_BOOKING: 'success',
 					};
 					const borderColor = borders[order.status];
+					const variantByStatus = (order.status == STATUSES.NEW_BOOKING) ? "warning" : "success";
 					return (
 						<Col xl={3} md={3} sm={6} xs={6} key={order._id}>
 							<Card className="p-2" border={borderColor}>
@@ -82,7 +87,8 @@ const BookingLessor = ({ user }) => {
 									<p>{`${hebrewText.rentStart}: ${dateFormate(order.startRent)}`}</p>
 									<p>{`${hebrewText.retnEnd}: ${dateFormate(order.endRent)}`}</p>
 									<p>
-										{`${hebrewText.status}: ${hebrewText.statusValue[order.status]}`}
+										{`${hebrewText.status}:`}
+										<Badge variant={variantByStatus}>{hebrewText.statusValue[order.status]}</Badge>
 									</p>
 								</Card.Body>
 								<Card.Footer className="text-center">
