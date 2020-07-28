@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useHistory } from 'react-router-dom';
-import { Container, Row, Col, Carousel, Badge, Card, Image, Button, Alert } from 'react-bootstrap';
+import { Container, Row, Col, Carousel, Badge, Card, Image, Button, Alert, Modal, Form } from 'react-bootstrap';
 import Api from '../Api';
 
 //date-time picker  https://github.com/YouCanBookMe/react-datetime
@@ -22,6 +22,15 @@ const Item = ({ user }) => {
 	const [index, setIndex] = useState(0); //Carousel
 	const [startDate, setStartDate] = useState('');
 	const [endDate, setEndDate] = useState('');
+	const [show, setShow] = useState(false);//show modal message
+
+	//handle modal show/close
+	const handleClose = () => setShow(false);
+	const handleShow = () => setShow(true);
+
+	const userExist = (user) ? true : false;
+	const varientBtn = (user) ? 'primary' : 'dark';
+	console.log(varientBtn);
 
 	//Carousel  handle
 	const handleSelect = (selectedIndex, e) => {
@@ -56,6 +65,7 @@ const Item = ({ user }) => {
 	}
 
 	async function submitOrder() {
+		//TODO: validate order dates  & user existesne
 		const dayDiffenece = differenceInCalendarDays(new Date(endDate), new Date(startDate));
 		const totalPrice = dayDiffenece * Number(item.priceDay);
 
@@ -103,7 +113,12 @@ const Item = ({ user }) => {
 								<p>סה"כ עסקאות: 123</p>
 								<p>משתמש פעיל מתאריך {formatDate(lessor.createdAt)}</p>
 							</Card.Text>
-							<Button variant="primary" size="md" block>
+							<Button
+								variant={varientBtn}
+								size="md"
+								disabled={!userExist}
+								onClick={handleShow}
+								block>
 								שלח הודעה
 							</Button>
 						</Card.Body>
@@ -163,7 +178,11 @@ const Item = ({ user }) => {
 							<Col md={4} sm={12} xs={12}>
 								<h5>סה"כ</h5>
 								<p> &#x20aa; 182 </p>
-								<Button variant="primary" block onClick={submitOrder}>
+								<Button
+									variant={varientBtn}
+									disabled={!userExist}
+									onClick={submitOrder}
+									block>
 									הזמן
 								</Button>
 							</Col>
@@ -238,7 +257,23 @@ const Item = ({ user }) => {
 					</Card.Body>
 				</Card>
 			</Row>
-		</Container>
+
+			<Modal show={show} onHide={handleClose} >
+				<Modal.Header closeButton>
+					<Modal.Title >הודעה לשוכר</Modal.Title>
+				</Modal.Header>
+				<Modal.Body dir="rtl">
+					<Form.Control as="textarea" rows="3" />
+				</Modal.Body>
+				<Modal.Footer>
+					<Button variant="primary" onClick={handleClose}>
+						שלח הודעה
+          </Button>
+				</Modal.Footer>
+			</Modal>
+		</Container >
+
+
 	);
 };
 
