@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, CardGroup, Card, Button } from 'react-bootstrap';
+import { Container, Row, Col, CardGroup, Card, Button, Modal, Form } from 'react-bootstrap';
 import { differenceInCalendarDays, format } from 'date-fns';
+import Rating from 'react-rating'; // https://github.com/dreyescat/react-rating
 import Api from '../Api';
 
 const STATUSES = {
@@ -25,6 +26,11 @@ const hebrewText = {
 
 const HistoryLessee = ({ user }) => {
     const [orders, setOrders] = useState([]);
+    const [selectedOrder, setSelectedOrder] = useState({});// selected by Modal onClick
+    const [show, setShow] = useState(false);//MODAL review
+
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
 
     useEffect(() => {
         async function getOrdersByUserId() {
@@ -65,13 +71,41 @@ const HistoryLessee = ({ user }) => {
                                     <p>{`${hebrewText.retnEnd}: ${dateFormate(order.endRent)}`}</p>
                                 </Card.Body>
                                 <Card.Footer className="text-center">
-                                    <Button>השאר חוות דעת</Button>
+                                    <Button onClick={() => {
+                                        setSelectedOrder(order);
+                                        handleShow();
+                                    }}>
+                                        השאר חוות דעת
+                                    </Button>
                                 </Card.Footer>
                             </Card>
                         </Col>
                     );
                 })}
             </CardGroup>
+
+            <Modal show={show} onHide={handleClose} >
+                <Modal.Header closeButton>
+                    <Modal.Title >חוות דעת </Modal.Title>
+                </Modal.Header>
+                <Modal.Body dir="rtl">
+                    <Rating
+                        onChange={(rate) => console.log('rate is:', rate)}
+                        emptySymbol={<svg width="2em" height="2em" viewBox="0 0 16 16" class="bi bi-star" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.523-3.356c.329-.314.158-.888-.283-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767l-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288l1.847-3.658 1.846 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.564.564 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z" />
+                        </svg>}
+                        fullSymbol={<svg width="2em" height="2em" viewBox="0 0 16 16" class="bi bi-star-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.283.95l-3.523 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
+                        </svg>}
+                    />
+                    <Form.Control placeholder="כתוב חוות דעת על המוצר ושירות המשכיר" as="textarea" rows="3" />
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="primary" >
+                        שלח
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </Container>
     )
 }

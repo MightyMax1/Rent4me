@@ -22,6 +22,7 @@ import HistoryLessee from './pages/historyLessee';
 import BookingLessee from './pages/BookingLessee';
 import CurrentLessee from './pages/CurrentLessee';
 import MessagesList from './pages/MessagesList';
+import Message from './pages/Message';
 
 import Loading from './componets/Loading';
 import Api from './Api.js';
@@ -80,9 +81,13 @@ function App() {
 					<Route exact path="/messages">
 						<MessagesList user={user} />
 					</Route>
+					<Route exact path="/messages/message/:id">
+						<Message user={user} />
+					</Route>
 					<Route exact path="/register">
 						<Register onLogin={onLogin} />
 					</Route>
+
 
 					{/* lessor section */}
 					<Route exact path="/private/lessor/booking">
