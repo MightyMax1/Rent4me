@@ -4,6 +4,8 @@ import './App.css';
 // Route - render component base on path
 import { Route, useHistory, Switch } from 'react-router-dom';
 
+import io from 'socket.io-client';
+
 // import component
 import MainNavbar from './componets/MainNavbar';
 import FooterCont from './componets/FooterCont';
@@ -31,6 +33,7 @@ function App() {
 	const [user, setUser] = useState(null);
 
 	const [loading, setLoading] = useState(true);
+	const [messages, setMessage] = useState([]);
 
 	const history = useHistory();
 
@@ -53,6 +56,14 @@ function App() {
 			if (!token) {
 				return setLoading(false);
 			}
+			window.socket = io(`http://localhost:4000?token=${token}`);
+			window.socket.on('connect', () => {
+				console.log('client id', window.socket.id);
+			});
+
+			window.socket.on('MESSAGE', data => {
+				console.log('on Message', data);
+			});
 			const data = await Api.getCurrentUser();
 			if (data.err) {
 				return setLoading(false);
@@ -65,9 +76,7 @@ function App() {
 
 	if (loading) {
 		// wait until fetch current user finish
-		return (
-			<Loading />
-		)
+		return <Loading />;
 	}
 
 	return (
@@ -87,7 +96,6 @@ function App() {
 					<Route exact path="/register">
 						<Register onLogin={onLogin} />
 					</Route>
-
 
 					{/* lessor section */}
 					<Route exact path="/private/lessor/booking">

@@ -2,6 +2,85 @@ const { getMongoClient } = require('../helpers');
 
 const { ObjectID } = require('mongodb');
 
+// chat
+async function getChatByParticipants(participants) {
+	try {
+		const mongoClient = await getMongoClient();
+		// define users collection
+		const messagesCollection = mongoClient.db('rentme').collection('chats');
+
+		// find all products by category id
+		const chat = await messagesCollection.findOne({ participants: { $all: participants } });
+
+		// find category title by id
+
+		return chat;
+	} catch (error) {
+		console.log(error.message);
+	}
+}
+// chat
+async function createChat(participants) {
+	try {
+		const mongoClient = await getMongoClient();
+		// define users collection
+		const messagesCollection = mongoClient.db('rentme').collection('chats');
+
+		// find all products by category id
+		const chat = await messagesCollection.insertOne({ participants });
+
+		// find category title by id
+
+		return chat;
+	} catch (error) {
+		console.log(error.message);
+	}
+}
+
+const chats = {
+	getChatByParticipants,
+	createChat,
+};
+
+// new messsage
+async function createMessage({ sender, message, receiver, chatId }) {
+	try {
+		// get mongo connection
+		const mongoClient = await getMongoClient();
+		// define users collection
+		const messagesCollection = mongoClient.db('rentme').collection('messages');
+
+		// insert new order
+		const result = await messagesCollection.insertOne({ sender, message, receiver, chatId });
+
+		// return the order details from db (with inserted _id)
+		return result.ops[0];
+	} catch (error) {
+		console.log('AddProduct err', err.message);
+	}
+}
+async function getMessageByUserId(id) {
+	try {
+		const mongoClient = await getMongoClient();
+		// define users collection
+		const messagesCollection = mongoClient.db('rentme').collection('messages');
+
+		// find all products by category id
+		const messages = await messagesCollection.find({ 'receiver._id': id }).toArray();
+		// find category title by id
+
+		return messages;
+	} catch (error) {
+		console.log(error.message);
+	}
+}
+
+// all function in messages collection
+const messages = {
+	createMessage,
+	getMessageByUserId,
+};
+
 async function getProductsAndCategories() {
 	try {
 		const mongoClient = await getMongoClient();
@@ -17,7 +96,7 @@ async function getProductsAndCategories() {
 		const categories = await collection_categories.find({}).toArray();
 
 		return { categories, newProducts };
-	} catch (error) { }
+	} catch (error) {}
 }
 
 async function getProductsByCategoryId(id) {
@@ -85,7 +164,7 @@ async function getCategories() {
 		const categories = await collection_categories.find({}).toArray();
 
 		return { categories };
-	} catch (error) { }
+	} catch (error) {}
 }
 
 async function AddProduct(product, userEmail) {
@@ -148,7 +227,6 @@ async function updateOrderStatus(orderId, status, userId, userType) {
 
 async function getOrdersByUserId(userId, userType) {
 	try {
-
 		// get mongo connection
 		const mongoClient = await getMongoClient();
 		// define users collection
@@ -180,4 +258,6 @@ module.exports = {
 	addOrder,
 	getOrdersByUserId,
 	updateOrderStatus,
+	messages,
+	chats,
 };

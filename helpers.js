@@ -55,9 +55,13 @@ function verifyToken(token) {
 		});
 	});
 }
+function verifyTokenSync(token) {
+	return jwt.verify(token, privateKey);
+}
 
 module.exports = {
 	getMongoClient,
 	createToken,
 	verifyToken,
+	verifyTokenSync,
 };

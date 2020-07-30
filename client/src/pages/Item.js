@@ -22,19 +22,36 @@ const Item = ({ user }) => {
 	const [index, setIndex] = useState(0); //Carousel
 	const [startDate, setStartDate] = useState('');
 	const [endDate, setEndDate] = useState('');
-	const [show, setShow] = useState(false);//show modal message
+
+	const [message, setMessage] = useState('');
+
+	const [show, setShow] = useState(false); //show modal message
 
 	//handle modal show/close
 	const handleClose = () => setShow(false);
 	const handleShow = () => setShow(true);
 
-	const userExist = (user) ? true : false;
-	const varientBtn = (user) ? 'primary' : 'dark';
+	const userExist = user ? true : false;
+	const varientBtn = user ? 'primary' : 'dark';
 	console.log(varientBtn);
 
 	//Carousel  handle
 	const handleSelect = (selectedIndex, e) => {
 		setIndex(selectedIndex);
+	};
+
+	const onMessage = e => {
+		const { value } = e.target;
+		setMessage(value);
+	};
+
+	const sendMessage = e => {
+		e.preventDefault();
+		console.log('msg', message);
+		console.log('user', user);
+		console.log('lessor', lessor);
+		// send message to server with socket
+		window.socket.emit('MESSAGE', { user, message, receiver: lessor });
 	};
 
 	// run after every render (by default)
@@ -50,7 +67,7 @@ const Item = ({ user }) => {
 			setLessor(data.lessor);
 		}
 		getItem();
-		window.scrollTo(0, 0);//scroll to top when page load
+		window.scrollTo(0, 0); //scroll to top when page load
 	}, []);
 
 	function formatDate(date) {
@@ -70,7 +87,6 @@ const Item = ({ user }) => {
 		const totalPrice = dayDiffenece * Number(item.priceDay);
 
 		try {
-
 			const body = {
 				user: user, //lessee
 				startRent: startDate,
@@ -80,7 +96,7 @@ const Item = ({ user }) => {
 				totalPrice: totalPrice,
 			};
 
-			console.log('submitted order obj: ', body)
+			console.log('submitted order obj: ', body);
 
 			const data = Api.addNewOrder(body);
 			console.log('data order', data);
@@ -113,12 +129,7 @@ const Item = ({ user }) => {
 								<p>סה"כ עסקאות: 123</p>
 								<p>משתמש פעיל מתאריך {formatDate(lessor.createdAt)}</p>
 							</Card.Text>
-							<Button
-								variant={varientBtn}
-								size="md"
-								disabled={!userExist}
-								onClick={handleShow}
-								block>
+							<Button variant={varientBtn} size="md" disabled={!userExist} onClick={handleShow} block>
 								שלח הודעה
 							</Button>
 						</Card.Body>
@@ -178,11 +189,7 @@ const Item = ({ user }) => {
 							<Col md={4} sm={12} xs={12}>
 								<h5>סה"כ</h5>
 								<p> &#x20aa; 182 </p>
-								<Button
-									variant={varientBtn}
-									disabled={!userExist}
-									onClick={submitOrder}
-									block>
+								<Button variant={varientBtn} disabled={!userExist} onClick={submitOrder} block>
 									הזמן
 								</Button>
 							</Col>
@@ -258,22 +265,20 @@ const Item = ({ user }) => {
 				</Card>
 			</Row>
 
-			<Modal show={show} onHide={handleClose} >
+			<Modal show={show} onHide={handleClose}>
 				<Modal.Header closeButton>
-					<Modal.Title >הודעה לשוכר</Modal.Title>
+					<Modal.Title>הודעה לשוכר</Modal.Title>
 				</Modal.Header>
 				<Modal.Body dir="rtl">
-					<Form.Control as="textarea" rows="3" />
+					<Form.Control as="textarea" rows="3" name="message" onChange={onMessage} />
 				</Modal.Body>
 				<Modal.Footer>
-					<Button variant="primary" onClick={handleClose}>
+					<Button variant="primary" onClick={sendMessage}>
 						שלח הודעה
-          </Button>
+					</Button>
 				</Modal.Footer>
 			</Modal>
-		</Container >
-
-
+		</Container>
 	);
 };
 

@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 // NavLink - change url
 import { Link, useHistory } from 'react-router-dom';
-import { Navbar, Nav, Col, Button, Modal, Form, Row, Badge } from 'react-bootstrap';
+import { Navbar, Nav, Col, Button, Modal, Form, Badge } from 'react-bootstrap';
 
 import Api from '../Api';
+
+import io from 'socket.io-client';
 
 // array of all link, every link have text, path and isPrivate(boolean if it private only logged in user can access )
 const links = [
@@ -45,6 +47,15 @@ function MainNavbar({ onLogin, onLogout, user }) {
 		// call login api
 		const data = await Api.login(form);
 		localStorage.setItem('token', data.token);
+
+		window.socket = io(`http://localhost:4000?token=${data.token}`);
+		window.socket.on('connect', () => {
+			console.log('client id', window.socket.id);
+		});
+
+		window.socket.on('MESSAGE', data => {
+			console.log('on Message', data);
+		});
 
 		// close modal
 		handleClose();

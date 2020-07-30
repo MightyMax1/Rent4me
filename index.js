@@ -1,9 +1,11 @@
 // import core nodejs modules
 const http = require('http');
-
+const url = require('url');
 // import npm modules
 const express = require('express');
 const mongoClient = require('mongodb');
+
+const io = require('socket.io');
 
 const STATUSES = {
 	NEW_BOOKING: 'NEW_BOOKING', //item just added
@@ -30,7 +32,7 @@ app.use(express.json({ limit: '10MB' }));
 app.use('/products', productRouter);
 
 // helper functions
-const { getMongoClient, createToken, verifyToken } = require('./helpers');
+const { getMongoClient, createToken, verifyToken, verifyTokenSync } = require('./helpers');
 
 //middleware that aprove user token and make user obj available
 async function privateApi(req, res, next) {
@@ -79,7 +81,7 @@ app.post('/orders/confirmReceiveItem', privateApi, async (req, res) => {
 	try {
 		const { userType, orderId } = req.body;
 
-		const status = (userType == 'lessee') ? STATUSES.CONFIRM_ITEM_BY_LESSEE : STATUSES.CONFIRM_ITEM_BY_LESSOR;
+		const status = userType == 'lessee' ? STATUSES.CONFIRM_ITEM_BY_LESSEE : STATUSES.CONFIRM_ITEM_BY_LESSOR;
 		//update order status
 		//and return all updated orders to user
 		const orders = await db.updateOrderStatus(orderId, status, req.user._id.toString(), userType);
@@ -89,8 +91,6 @@ app.post('/orders/confirmReceiveItem', privateApi, async (req, res) => {
 		res.json({ err: error.message });
 	}
 });
-
-
 
 // login route
 app.post('/auth/login', async (req, res) => {
@@ -116,7 +116,7 @@ app.post('/auth/login', async (req, res) => {
 		}
 
 		// create jwt token
-		const token = await createToken({ email: user.email });
+		const token = await createToken({ email: user.email, _id: user._id });
 		// return response to client with token and user data
 		res.json({
 			user: user, //TODO: pop out user password
@@ -170,6 +170,46 @@ app.post('/auth/signup', async (req, res) => {
 
 // create http server
 const server = http.createServer(app);
+
+const ioServer = io(server);
+
+ioServer.engine.generateId = req => {
+	try {
+		const { token } = url.parse(req.url, true).query;
+		const user = verifyTokenSync(token);
+		return user._id; // custom id must be unique
+	} catch (err) {
+		return null;
+	}
+};
+
+// emit / on
+ioServer.on('connection', client => {
+	console.log('new conn', client.id);
+
+	// on client send message
+	client.on('MESSAGE', async data => {
+		const user = await db.getUserByEmail(data.user.email);
+
+		let chat = null;
+		// ckeck if chat exits
+		chat = await db.chats.getChatByParticipants([user._id, data.receiver._id]);
+
+		if (!chat) {
+			// if chat not exists create new chat
+			chat = await db.chats.createChat([user._id, data.receiver._id]);
+		}
+		// create message in db add chat id to message
+		const newMessage = await db.messages.createMessage({
+			sender: user,
+			message: { text: data.message, date: Date.now() },
+			receiver: data.receiver,
+			chatId: chat._id,
+		});
+		// send message from server to user(receiver)
+		ioServer.to(data.receiver._id).emit('MESSAGE', { message: data.message, user: user });
+	});
+});
 
 // process.env = allow us define variables before run script
 // define server port number
