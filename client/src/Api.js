@@ -59,6 +59,11 @@ function Api() {
 			return data;
 		},
 
+		getItemsByLessorID: async (userId) => {
+			const data = await myFetch(`/products/getItemsByLessorID?id=${userId}`);
+			return data;
+		},
+
 	};
 }
 

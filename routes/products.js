@@ -139,10 +139,25 @@ router.get('/ordersByUserId', async (req, res) => {
 	try {
 
 		const { id, userType } = req.query;
-		const newProduct = await db.getOrdersByUserId(id, userType);
-		res.json(newProduct);
+		const orders = await db.getOrdersByUserId(id, userType);
+		res.json(orders);
 	} catch (err) {
 		console.log('get ordersByUserId err: ', err.message);
+		res.status(500).json({
+			err: err.message,
+		});
+	}
+});
+
+// get all items by user id (lessor)
+router.get('/getItemsByLessorID', async (req, res) => {
+	try {
+
+		const { id } = req.query;
+		const userItems = await db.getItemsByUserId(id);
+		res.json(userItems);
+	} catch (err) {
+		console.log('get ItemsByUserId err: ', err.message);
 		res.status(500).json({
 			err: err.message,
 		});

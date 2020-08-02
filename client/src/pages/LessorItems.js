@@ -1,70 +1,60 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, CardGroup, Card, Button, Modal } from 'react-bootstrap';
+import Api from '../Api';
 
 const LessorItems = ({ user }) => {
+    const [items, setItems] = useState(null);
     const [show, setShow] = useState(false);//MODAL review
+    const [selectedItem, setSelectedItem] = useState({});// selected by  onClick Modal BTN
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
+    useEffect(() => {
+        async function getItemsByLessorID() {
+            const lessorID = user._id;
+            const data = await Api.getItemsByLessorID(lessorID);
+            setItems(data);
+        }
+        getItemsByLessorID();
+    }, []);
+
     return (
         <Container>
+            {console.log('my items:', items)}
             <CardGroup as={Row} className="pt-3" dir="rtl">
-                <Col xl={3} md={3} sm={6} xs={6} >
-                    <Card className="p-2">
-                        <Card.Img variant="top" src='https://icon-library.com/images/img-icon/img-icon-24.jpg' />
-                        <Card.Body className="text-center">
-                            <Card.Title>title ttttitle </Card.Title>
-                        </Card.Body>
-                        <Card.Footer className="text-center">
-                            <Button block>
-                                עריכת מוצר
+                {items && items.map((item) => {
+                    return (
+                        <Col xl={3} md={3} sm={6} xs={6} >
+                            <Card className="p-2" key={item._id}>
+                                <Card.Img variant="top" src={item.mainImg} />
+                                <Card.Body className="text-center">
+                                    <Card.Title>{item.title}</Card.Title>
+                                </Card.Body>
+                                <Card.Footer className="text-center">
+                                    <Button block>
+                                        עריכת מוצר
                             </Button>
-                            <Button variant='danger' onClick={handleShow} block>
-                                מחיקת מוצר
+                                    <Button
+                                        variant='danger'
+                                        onClick={() => {
+                                            setSelectedItem(item);
+                                            handleShow();
+                                        }}
+                                        block>
+                                        מחיקת מוצר
                             </Button>
-                        </Card.Footer>
-                    </Card>
-                </Col>
-                <Col xl={3} md={3} sm={6} xs={6} >
-                    <Card className="p-2">
-                        <Card.Img variant="top" src='https://icon-library.com/images/img-icon/img-icon-24.jpg' />
-                        <Card.Body className="text-center">
-                            <Card.Title>title ttttitle </Card.Title>
-                        </Card.Body>
-                        <Card.Footer className="text-center">
-                            <Button block>
-                                עריכת מוצר
-                            </Button>
-                            <Button variant='danger' onClick={handleShow} block>
-                                מחיקת מוצר
-                            </Button>
-                        </Card.Footer>
-                    </Card>
-                </Col>
-                <Col xl={3} md={3} sm={6} xs={6} >
-                    <Card className="p-2">
-                        <Card.Img variant="top" src='https://icon-library.com/images/img-icon/img-icon-24.jpg' />
-                        <Card.Body className="text-center">
-                            <Card.Title>title ttttitle </Card.Title>
-                        </Card.Body>
-                        <Card.Footer className="text-center">
-                            <Button block>
-                                עריכת מוצר
-                            </Button>
-                            <Button variant='danger' onClick={handleShow} block>
-                                מחיקת מוצר
-                            </Button>
-                        </Card.Footer>
-                    </Card>
-                </Col>
+                                </Card.Footer>
+                            </Card>
+                        </Col>
+                    );
+                })}
             </CardGroup>
-
             <Modal show={show} onHide={handleClose} >
                 <Modal.Header closeButton>
                 </Modal.Header>
                 <Modal.Body dir="rtl" className='text-right'>
-                    <h3>שם מוצר: תותח פירורי שניצל</h3>
+                    <h3>שם מוצר: {(selectedItem) ? selectedItem.title : ''}</h3>
                     <p>בטוח שאתה רוצה למחוק מוצר זה?</p>
                 </Modal.Body>
                 <Modal.Footer>
@@ -80,7 +70,6 @@ const LessorItems = ({ user }) => {
                     </Col>
                 </Modal.Footer>
             </Modal>
-
         </Container>
     );
 }

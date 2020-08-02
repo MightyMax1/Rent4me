@@ -96,7 +96,7 @@ async function getProductsAndCategories() {
 		const categories = await collection_categories.find({}).toArray();
 
 		return { categories, newProducts };
-	} catch (error) {}
+	} catch (error) { }
 }
 
 async function getProductsByCategoryId(id) {
@@ -164,7 +164,7 @@ async function getCategories() {
 		const categories = await collection_categories.find({}).toArray();
 
 		return { categories };
-	} catch (error) {}
+	} catch (error) { }
 }
 
 async function AddProduct(product, userEmail) {
@@ -248,6 +248,23 @@ async function getOrdersByUserId(userId, userType) {
 	}
 }
 
+async function getItemsByUserId(userId) {
+	try {
+		// get mongo connection
+		const mongoClient = await getMongoClient();
+		// define users collection
+		itemsCollection = mongoClient.db('rentme').collection('items');
+
+		const ObjectId = require('mongodb').ObjectID;
+
+		// find items by userId 
+		const items = await itemsCollection.find({ userId: ObjectId(userId) }).toArray();
+		return items;
+	} catch (error) {
+		console.log('getItems err', err.message);
+	}
+}
+
 module.exports = {
 	getProductsAndCategories,
 	getUserByEmail,
@@ -260,4 +277,5 @@ module.exports = {
 	updateOrderStatus,
 	messages,
 	chats,
+	getItemsByUserId,
 };
