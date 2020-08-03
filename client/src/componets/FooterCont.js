@@ -1,11 +1,13 @@
 import React from 'react';
-import { Row, Col, Media, Button } from 'react-bootstrap';
+import { Container, Row, Col, Media, Button, Table } from 'react-bootstrap';
 
 function FooterCont(props) {
+
+
 	return (
-		<div className='container'>
+		<Container>
 			<Row dir="rtl">
-				<Col className="text-right">
+				<Col xl={3} md={3} sm={10} xs={10} className="text-right">
 					<Media as="li">
 						<Media.Body>
 							<Button className='text-right' variant="light">אודות</Button>
@@ -22,76 +24,59 @@ function FooterCont(props) {
 						</Media.Body>
 					</Media>
 				</Col>
-				<Col> 
-					<h5 className='text-right font-weight-bold'>אנחנו במספרים</h5>
-					<Row>
-						<Col>
-							<Media as="li">
-								<Media.Body>
-									<div className="text-right">משתמשים רשומים</div>
-								</Media.Body>
-							</Media>
-							<Media as="li">
-								<Media.Body>
-									<div className="text-right">סה"כ מוצרים</div>
-								</Media.Body>
-							</Media>
-							<Media as="li">
-								<Media.Body>
-									<div className="text-right">עסקאות מוצלחות</div>
-								</Media.Body>
-							</Media>
-						</Col>
-						<Col>
-							<Media as="li">
-								<Media.Body>
-									<div className="text-left">####</div>
-								</Media.Body>
-							</Media>
-							<Media as="li">
-								<Media.Body>
-									<div className="text-left">####</div>
-								</Media.Body>
-							</Media>
-							<Media as="li">
-								<Media.Body>
-									<div className="text-left">####</div>
-								</Media.Body>
-							</Media>
-						</Col>
-					</Row>
+				<Col xl={4} md={4} sm={10} xs={10}>
+					<Table striped bordered hover>
+						<tbody className='text-right'>
+							<tr>
+								<td>אנחנו במספרים</td>
+								<td>888</td>
+							</tr>
+							<tr>
+								<td>משתמשים רשומים</td>
+								<td>888</td>
+							</tr>
+							<tr>
+								<td>סה"כ מוצרים</td>
+								<td>888</td>
+							</tr>
+							<tr>
+								<td>עסקאות מוצלחות</td>
+								<td>888</td>
+							</tr>
+						</tbody>
+					</Table>
 				</Col>
-				<Col>
-				<h5 className='text-right font-weight-bold'>עקבו אחרינו</h5>
+				<Col xl={4} md={4} sm={10} xs={10}>
+					<h5 className='text-center mb-3 font-weight-bold'>עקבו אחרינו</h5>
 					<Row>
 						<Col>
 							<Media as="li">
 								<Media.Body>
-									<img className="img-fluid" src="./036-facebook.svg" width={100} />
+									<img className="img-fluid" src={process.env.PUBLIC_URL + "/036-facebook.svg"} style={{ width: '75px ', height: '75px' }} />
 								</Media.Body>
 							</Media>
 							<Media as="li">
 								<Media.Body>
-									<img img className="img-fluid" src="./001-youtube.svg" width={100} />
+									<img img className="img-fluid" src={process.env.PUBLIC_URL + "/001-youtube.svg"} style={{ width: '75px ', height: '75px' }} />
 								</Media.Body>
 							</Media>
 						</Col>
 						<Col>
 							<Media as="li">
 								<Media.Body>
-									<img img className="img-fluid" src="./008-twitter.svg" width={100} />
+									<img img className="img-fluid" src={process.env.PUBLIC_URL + "/008-twitter.svg"} style={{ width: '75px ', height: '75px' }} />
 								</Media.Body>
 							</Media>
 							<Media as="li">
 								<Media.Body>
-									<img img className="img-fluid" src="./029-instagram.svg" width={100} />
+									<img img className="img-fluid" src={process.env.PUBLIC_URL + "/029-instagram.svg"} style={{ width: '75px ', height: '75px' }} />
 								</Media.Body>
 							</Media>
 						</Col>
 					</Row>
 				</Col>
 			</Row>
-		</div>
+		</Container>
 	)
 }
 

@@ -17,6 +17,7 @@ import AddItem from './pages/AddItem';
 import PrivatePage from './pages/Private';
 import CategoryPage from './pages/Category';
 import Item from './pages/Item';
+import LessorItems from './pages/LessorItems';
 import BookingLessor from './pages/BookingLessor';
 import CurrentLessor from './pages/CurrentLessor';
 import HistoryLessor from './pages/HistoryLessor';
@@ -98,6 +99,9 @@ function App() {
 					</Route>
 
 					{/* lessor section */}
+					<Route exact path='/edit_items'>
+						<LessorItems user={user} />
+					</Route>
 					<Route exact path="/private/lessor/booking">
 						<BookingLessor user={user} />
 					</Route>

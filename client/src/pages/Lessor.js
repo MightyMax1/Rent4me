@@ -8,8 +8,16 @@ const Lessor = () => {
 	return (
 		<Container>
 			<Row className="align-center mb-3">
-				<Button as={Col} xl={{ span: '4', offset: '2' }} md={{ span: '4', offset: '2' }} className="mt-1">
-					עריכת מוצר
+				<Button
+					as={Col}
+					onClick={() => {
+						history.push('/edit_items');
+					}}
+					xl={{ span: '4', offset: '2' }}
+					md={{ span: '4', offset: '2' }}
+					className="mt-1"
+				>
+					מוצרים שלי
 				</Button>
 				<Button
 					onClick={() => {
