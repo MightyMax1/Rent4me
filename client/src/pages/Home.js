@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Button, Container, Row, CardDeck, CardGroup, Col, Badge, Form } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import Api from '../Api';
 
 function Home(props) {
-	const [counter, setCounter] = useState(0);
 	let [products, setProducts] = useState([]);
 	let [categories, setCategories] = useState([]);
+	let [searchWorld, setSearchWorld] = useState('');
 
-	function onClick() {
-		console.log('clicked');
-		setCounter(counter + 1);
+	const history = useHistory();
+
+	function submitSearch() {
+		history.push(`/search/${searchWorld}`);
 	}
 
 	// run after every render (by default)
@@ -46,11 +47,11 @@ function Home(props) {
 				}}>
 				<Form.Row className="align-middle">
 					<Col xl={{ span: 6, offset: 2 }} md={{ span: 6, offset: 2 }} sm={{ span: 6, offset: 2 }} xs={{ span: 6, offset: 2 }}>
-						<Form.Control name="freeSearch" type="text" size={'sm'} dir="rtl" placeholder="חיפוש חופשי" />
+						<Form.Control onChange={e => setSearchWorld(e.target.value)} type="text" size={'sm'} dir="rtl" placeholder="חיפוש חופשי" />
 					</Col>
 					<Col>
-						<Button size={'sm'} onClick={onClick}>
-							חפש {counter}
+						<Button size={'sm'} onClick={submitSearch}>
+							חפש
 						</Button>
 					</Col>
 				</Form.Row>

@@ -26,6 +26,7 @@ import BookingLessee from './pages/BookingLessee';
 import CurrentLessee from './pages/CurrentLessee';
 import MessagesList from './pages/MessagesList';
 import Message from './pages/Message';
+import Search from './pages/Search';
 
 import Loading from './componets/Loading';
 import Api from './Api.js';
@@ -75,6 +76,7 @@ function App() {
 		getCurrent();
 	}, []);
 
+	//loading page effect
 	if (loading) {
 		// wait until fetch current user finish
 		return <Loading />;
@@ -96,6 +98,9 @@ function App() {
 					</Route>
 					<Route exact path="/register">
 						<Register onLogin={onLogin} />
+					</Route>
+					<Route exact path="/search/:searchWord">
+						<Search />
 					</Route>
 
 					{/* lessor section */}
