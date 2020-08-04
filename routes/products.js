@@ -149,6 +149,21 @@ router.get('/ordersByUserId', async (req, res) => {
 	}
 });
 
+// get items by word search
+router.get('/itemsBySearch', async (req, res) => {
+	try {
+		const { searchWord } = req.query;
+
+		const items = await db.getItemsByWordSearch(searchWord.trim().replace(' ', '|'));
+		res.json(items);
+	} catch (err) {
+		console.log('get itemsBySearch err: ', err.message);
+		res.status(500).json({
+			err: err.message,
+		});
+	}
+});
+
 // get all items by user id (lessor)
 router.get('/getItemsByLessorID', async (req, res) => {
 	try {

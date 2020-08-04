@@ -24,6 +24,11 @@ function Api() {
 			return data;
 		},
 
+		getItemsBySearchWord: async (word) => {
+			const data = await myFetch(`/products/itemsBySearch?searchWord=${word}`);
+			return data;
+		},
+
 		confirmReceivingItem: async (orderId, userType) => {
 			const data = await myFetch('/orders/confirmReceiveItem', 'POST', { userType, orderId });
 			return data;
