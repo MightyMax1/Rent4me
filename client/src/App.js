@@ -29,7 +29,7 @@ import Message from './pages/Message';
 import Search from './pages/Search';
 
 import Loading from './componets/Loading';
-import Api from './Api.js';
+import Api from './Api';
 
 function App() {
 	const [user, setUser] = useState(null);

@@ -24,7 +24,7 @@ function Api() {
 			return data;
 		},
 
-		getItemsBySearchWord: async (word) => {
+		getItemsBySearchWord: async word => {
 			const data = await myFetch(`/products/itemsBySearch?searchWord=${word}`);
 			return data;
 		},
@@ -45,7 +45,9 @@ function Api() {
 			return data;
 		},
 
+		// users
 		getCurrentUser: async () => await myFetch('/auth/currentUser'),
+		getUserById: async id => await myFetch(`/users/${id}`),
 
 		getCategories: async () => await myFetch('/products/categories'),
 
@@ -64,11 +66,16 @@ function Api() {
 			return data;
 		},
 
-		getItemsByLessorID: async (userId) => {
+		getItemsByLessorID: async userId => {
 			const data = await myFetch(`/products/getItemsByLessorID?id=${userId}`);
 			return data;
 		},
 
+		// messages
+		getMessageByChatId: async id => myFetch(`/messages/chat/${id}`),
+
+		// chats
+		getChatsByUserId: async id => await myFetch(`/chats/user/${id}`),
 	};
 }
 

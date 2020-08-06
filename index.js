@@ -17,6 +17,9 @@ const STATUSES = {
 const cors = require('cors');
 
 const productRouter = require('./routes/products');
+const chatsRouter = require('./routes/chats');
+const usersRouter = require('./routes/users');
+const messagesRouter = require('./routes/messages');
 
 const db = require('./database');
 
@@ -30,6 +33,9 @@ app.use(express.json({ limit: '10MB' }));
 
 // register routes
 app.use('/products', productRouter);
+app.use('/chats', chatsRouter);
+app.use('/users', usersRouter);
+app.use('/messages', messagesRouter);
 
 // helper functions
 const { getMongoClient, createToken, verifyToken, verifyTokenSync } = require('./helpers');
@@ -197,7 +203,7 @@ ioServer.on('connection', client => {
 
 		if (!chat) {
 			// if chat not exists create new chat
-			chat = await db.chats.createChat([user._id, data.receiver._id]);
+			chat = await db.chats.createChat([user._id.toString(), data.receiver._id]);
 		}
 		// create message in db add chat id to message
 		const newMessage = await db.messages.createMessage({
@@ -206,6 +212,8 @@ ioServer.on('connection', client => {
 			receiver: data.receiver,
 			chatId: chat._id,
 		});
+
+		console.log('newMessage', newMessage);
 		// send message from server to user(receiver)
 		ioServer.to(data.receiver._id).emit('MESSAGE', { message: data.message, user: user });
 	});

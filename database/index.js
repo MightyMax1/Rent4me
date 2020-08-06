@@ -2,6 +2,10 @@ const { getMongoClient } = require('../helpers');
 
 const { ObjectID } = require('mongodb');
 
+// collections
+const users = require('./users');
+const messages = require('./messages');
+
 // chat
 async function getChatByParticipants(participants) {
 	try {
@@ -10,6 +14,20 @@ async function getChatByParticipants(participants) {
 		const messagesCollection = mongoClient.db('rentme').collection('chats');
 
 		const chat = await messagesCollection.findOne({ participants: { $all: participants } });
+
+		return chat;
+	} catch (error) {
+		console.log(error.message);
+	}
+}
+// chat
+async function getChatsByParticipants(participants) {
+	try {
+		const mongoClient = await getMongoClient();
+		// define users collection
+		const messagesCollection = mongoClient.db('rentme').collection('chats');
+
+		const chat = await messagesCollection.find({ participants: { $all: participants } }).toArray();
 
 		return chat;
 	} catch (error) {
@@ -36,46 +54,8 @@ async function createChat(participants) {
 
 const chats = {
 	getChatByParticipants,
+	getChatsByParticipants,
 	createChat,
-};
-
-// new messsage
-async function createMessage({ sender, message, receiver, chatId }) {
-	try {
-		// get mongo connection
-		const mongoClient = await getMongoClient();
-		// define users collection
-		const messagesCollection = mongoClient.db('rentme').collection('messages');
-
-		// insert new order
-		const result = await messagesCollection.insertOne({ sender, message, receiver, chatId });
-
-		// return the order details from db (with inserted _id)
-		return result.ops[0];
-	} catch (error) {
-		console.log('AddProduct err', err.message);
-	}
-}
-async function getMessageByUserId(id) {
-	try {
-		const mongoClient = await getMongoClient();
-		// define users collection
-		const messagesCollection = mongoClient.db('rentme').collection('messages');
-
-		// find all products by category id
-		const messages = await messagesCollection.find({ 'receiver._id': id }).toArray();
-		// find category title by id
-
-		return messages;
-	} catch (error) {
-		console.log(error.message);
-	}
-}
-
-// all function in messages collection
-const messages = {
-	createMessage,
-	getMessageByUserId,
 };
 
 async function getProductsAndCategories() {
@@ -93,7 +73,7 @@ async function getProductsAndCategories() {
 		const categories = await collection_categories.find({}).toArray();
 
 		return { categories, newProducts };
-	} catch (error) { }
+	} catch (error) {}
 }
 
 async function getProductsByCategoryId(id) {
@@ -161,7 +141,7 @@ async function getCategories() {
 		const categories = await collection_categories.find({}).toArray();
 
 		return { categories };
-	} catch (error) { }
+	} catch (error) {}
 }
 
 async function AddProduct(product, userEmail) {
@@ -254,7 +234,7 @@ async function getItemsByUserId(userId) {
 
 		const ObjectId = require('mongodb').ObjectID;
 
-		// find items owner by userId 
+		// find items owner by userId
 		const items = await itemsCollection.find({ userId: ObjectId(userId) }).toArray();
 		return items;
 	} catch (error) {
@@ -268,21 +248,19 @@ async function getItemsByWordSearch(searchWord) {
 		// define collection
 		collection_items = mongoClient.db('rentme').collection('items');
 		console.log('word search:', searchWord);
-		const items = await collection_items.find({
-			title: {
-				$regex: `.*${searchWord}.`
-			}
-		}).toArray();
-
-
+		const items = await collection_items
+			.find({
+				title: {
+					$regex: `.*${searchWord}.`,
+				},
+			})
+			.toArray();
 
 		return { items };
 	} catch (error) {
 		console.log(error.message);
 	}
 }
-
-
 
 module.exports = {
 	getProductsAndCategories,
@@ -296,6 +274,7 @@ module.exports = {
 	updateOrderStatus,
 	messages,
 	chats,
+	users,
 	getItemsByUserId,
-	getItemsByWordSearch
+	getItemsByWordSearch,
 };
