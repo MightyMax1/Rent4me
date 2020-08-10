@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Jumbotron, Row, Col, Card, Image } from 'react-bootstrap';
+import { Container, Jumbotron, Row, Col, Button, Card, Image, Form } from 'react-bootstrap';
 
 import { useParams } from 'react-router-dom';
 
@@ -9,18 +9,38 @@ import Api from '../Api';
 
 const Message = ({ user }) => {
 	const { id } = useParams();
-
 	const [messages, setMessages] = useState([]);
+	const [message, setMessage] = useState('');
+	const [friendOBJ, setFriend] = useState({});
+
+
 
 	useEffect(() => {
 		async function getAllMessages() {
 			const data = await Api.getMessageByChatId(id);
 			console.log('data', data);
 			setMessages(data);
+
+			const friendID = (data[0].sender._id != user._id) ? data[0].sender._id : data[0].receiver._id;
+			const friendObj = await Api.getUserById(friendID);
+			setFriend(friendObj);
+
 		}
 
 		getAllMessages();
 	}, []);
+
+	const onMessage = e => {
+		const { value } = e.target;
+		setMessage(value);
+	};
+
+	const sendMessage = e => {
+		e.preventDefault();
+		// send message to server with socket
+		window.socket.emit('MESSAGE', { user, message, receiver: friendOBJ });
+		document.getElementById('textAreaMSG').value = '';
+	};
 
 	return (
 		<Container>
@@ -54,8 +74,24 @@ const Message = ({ user }) => {
 						</Card>
 					);
 				})}
+				<Form className='mt-3' dir='rtl'>
+					<h3 className='text-center'>
+						שלח הודעה
+					</h3>
+					<Row>
+						<Col xl='12'>
+							<Form.Control as="textarea" rows="3" id="textAreaMSG" name="message" onChange={onMessage} placeholder='רשום הודעה כאן' />
+						</Col>
+						<Col className='mt-3 ' xl='3' >
+							<Button variant="primary" onClick={sendMessage} block >
+								שלח
+							</Button>
+						</Col>
+					</Row>
+
+				</Form>
 			</Jumbotron>
-		</Container>
+		</Container >
 	);
 };
 

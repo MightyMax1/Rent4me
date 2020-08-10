@@ -52,6 +52,7 @@ const Item = ({ user }) => {
 		console.log('lessor', lessor);
 		// send message to server with socket
 		window.socket.emit('MESSAGE', { user, message, receiver: lessor });
+		handleClose();
 	};
 
 	// run after every render (by default)
