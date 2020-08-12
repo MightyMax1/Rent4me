@@ -40,6 +40,8 @@ function Api() {
 			return data;
 		},
 
+		sendItemReview: async body => myFetch('/products/addReview', 'POST', body),
+
 		login: async body => {
 			const data = await myFetch('/auth/login', 'POST', body);
 			return data;

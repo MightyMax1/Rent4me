@@ -73,7 +73,7 @@ async function getProductsAndCategories() {
 		const categories = await collection_categories.find({}).toArray();
 
 		return { categories, newProducts };
-	} catch (error) {}
+	} catch (error) { }
 }
 
 async function getProductsByCategoryId(id) {
@@ -141,7 +141,7 @@ async function getCategories() {
 		const categories = await collection_categories.find({}).toArray();
 
 		return { categories };
-	} catch (error) {}
+	} catch (error) { }
 }
 
 async function AddProduct(product, userEmail) {
@@ -262,6 +262,24 @@ async function getItemsByWordSearch(searchWord) {
 	}
 }
 
+async function AddReview(review) {
+	try {
+		// get mongo connection
+		const mongoClient = await getMongoClient();
+		// define  collection
+		ordersCollection = mongoClient.db('rentme').collection('reviews');
+
+		// insert new review
+		const result = await ordersCollection.insertOne(review);
+
+		// return the review  from db (with inserted _id)
+		return result.ops[0];
+
+	} catch (error) {
+		console.log('AddReview err', err.message);
+	}
+}
+
 module.exports = {
 	getProductsAndCategories,
 	getUserByEmail,
@@ -277,4 +295,5 @@ module.exports = {
 	users,
 	getItemsByUserId,
 	getItemsByWordSearch,
+	AddReview,
 };

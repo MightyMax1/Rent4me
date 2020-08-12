@@ -179,4 +179,23 @@ router.get('/getItemsByLessorID', async (req, res) => {
 	}
 });
 
+router.post('/addReview', async (req, res) => {
+	try {
+
+		//add additional data to review
+		req.body['createdAt'] = Date();
+
+		// add review to db
+		const newReview = await db.AddReview(req.body);
+
+		res.json('success');
+
+	} catch (err) {
+		console.log('add review err: ', err.message);
+		res.status(500).json({
+			err: err.message,
+		});
+	}
+})
+
 module.exports = router;
