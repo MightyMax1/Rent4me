@@ -267,10 +267,10 @@ async function AddReview(review) {
 		// get mongo connection
 		const mongoClient = await getMongoClient();
 		// define  collection
-		ordersCollection = mongoClient.db('rentme').collection('reviews');
+		reviewsCollection = mongoClient.db('rentme').collection('reviews');
 
 		// insert new review
-		const result = await ordersCollection.insertOne(review);
+		const result = await reviewsCollection.insertOne(review);
 
 		// return the review  from db (with inserted _id)
 		return result.ops[0];
@@ -279,6 +279,25 @@ async function AddReview(review) {
 		console.log('AddReview err', err.message);
 	}
 }
+
+async function getReviews(id) {
+	try {
+		// get mongo connection
+		const mongoClient = await getMongoClient();
+		// define  collection
+		reviewsCollection = mongoClient.db('rentme').collection('reviews');
+		// find reviews by item id
+		const result = await reviewsCollection.find({ itemID: id }).sort({ createdAt: -1 }).toArray();
+
+		// return the reviews  
+		return result;
+
+	} catch (error) {
+		console.log('getReviews err', err.message);
+	}
+}
+
+
 
 module.exports = {
 	getProductsAndCategories,
@@ -296,4 +315,5 @@ module.exports = {
 	getItemsByUserId,
 	getItemsByWordSearch,
 	AddReview,
+	getReviews,
 };

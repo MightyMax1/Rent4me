@@ -3,6 +3,7 @@ import { Container, Row, Col, CardGroup, Card, Button, Modal, Form } from 'react
 import { differenceInCalendarDays, format } from 'date-fns';
 import Rating from 'react-rating'; // https://github.com/dreyescat/react-rating
 import Api from '../Api';
+import { Link } from 'react-router-dom';
 
 const STATUSES = {
     NEW_BOOKING: 'NEW_BOOKING', //item just added
@@ -59,7 +60,7 @@ const HistoryLessee = ({ user }) => {
 
     const sendReview = async () => {
         const reviewObj = {
-            itemID: selectedOrder._id,
+            itemID: selectedOrder.itemId,
             lessee: {
                 userID: user._id,
                 fullName: `${user.firstName} ${user.lastName}`,
@@ -86,12 +87,14 @@ const HistoryLessee = ({ user }) => {
                     return (
                         <Col xl={3} md={3} sm={6} xs={6} key={order._id}>
                             <Card className="p-2">
-                                <Card.Img variant="top" src={order.itemDetails.img} />
-                                <Card.Body className="text-right">
-                                    <Card.Title>{order.itemDetails.title}</Card.Title>
-                                    <p>{`${hebrewText.rentStart}: ${dateFormate(order.startRent)}`}</p>
-                                    <p>{`${hebrewText.retnEnd}: ${dateFormate(order.endRent)}`}</p>
-                                </Card.Body>
+                                <Link to={`/item/${order.itemId}`}>
+                                    <Card.Img variant="top" src={order.itemDetails.img} />
+                                    <Card.Body className="text-right">
+                                        <Card.Title>{order.itemDetails.title}</Card.Title>
+                                        <p>{`${hebrewText.rentStart}: ${dateFormate(order.startRent)}`}</p>
+                                        <p>{`${hebrewText.retnEnd}: ${dateFormate(order.endRent)}`}</p>
+                                    </Card.Body>
+                                </Link>
                                 <Card.Footer className="text-center">
                                     <Button onClick={() => {
                                         setSelectedOrder(order);
@@ -102,6 +105,7 @@ const HistoryLessee = ({ user }) => {
                                         השאר חוות דעת
                                     </Button>
                                 </Card.Footer>
+
                             </Card>
                         </Col>
                     );
@@ -131,7 +135,7 @@ const HistoryLessee = ({ user }) => {
                     </Button>
                 </Modal.Footer>
             </Modal>
-        </Container>
+        </Container >
     )
 }
 

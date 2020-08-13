@@ -42,6 +42,8 @@ function Api() {
 
 		sendItemReview: async body => myFetch('/products/addReview', 'POST', body),
 
+		getReviews: async id => myFetch(`/products/getReview?itemID=${id}`),
+
 		login: async body => {
 			const data = await myFetch('/auth/login', 'POST', body);
 			return data;
@@ -49,6 +51,7 @@ function Api() {
 
 		// users
 		getCurrentUser: async () => await myFetch('/auth/currentUser'),
+
 		getUserById: async id => await myFetch(`/users/${id}`),
 
 		getCategories: async () => await myFetch('/products/categories'),

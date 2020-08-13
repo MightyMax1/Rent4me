@@ -198,4 +198,17 @@ router.post('/addReview', async (req, res) => {
 	}
 })
 
+router.get('/getReview', async (req, res) => {
+	try {
+		const { itemID } = req.query;
+		const reviews = await db.getReviews(itemID);
+		res.json(reviews);
+	} catch (err) {
+		console.log('get Review err: ', err.message);
+		res.status(500).json({
+			err: err.message,
+		});
+	}
+})
+
 module.exports = router;
