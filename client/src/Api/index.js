@@ -79,9 +79,12 @@ function Api() {
 		// messages
 		getMessageByChatId: async id => myFetch(`/messages/chat/${id}`),
 
-		// chats
+		// chats 
 		getChatsByUserId: async id => await myFetch(`/chats/user/${id}`),
+
+		getFooterData: async () => await myFetch('/footerData'),
 	};
+
 }
 
 const api = Api();

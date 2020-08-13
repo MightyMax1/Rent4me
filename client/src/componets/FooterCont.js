@@ -1,7 +1,24 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Media, Button, Table } from 'react-bootstrap';
+import Api from '../Api';
 
 function FooterCont(props) {
+
+	const [totalItems, setTotalItems] = useState(0);
+	const [totalDeals, setTotalDeals] = useState(0);
+	const [totalUsers, setTotaUsers] = useState(0);
+
+	useEffect(() => {
+		async function getFooterData() {
+			const data = await Api.getFooterData();
+			setTotaUsers(data.totalUsers);
+			setTotalDeals(data.totalOrders);
+			setTotalItems(data.totalItems);
+		}
+
+		getFooterData();
+	}, []);
+
 
 
 	return (
@@ -25,30 +42,27 @@ function FooterCont(props) {
 					</Media>
 				</Col>
 				<Col xl={4} md={4} sm={10} xs={10}>
+					<h3 className='text-center'>אנחנו במספרים</h3>
 					<Table striped bordered hover>
 						<tbody className='text-right'>
 							<tr>
-								<td>אנחנו במספרים</td>
-								<td>888</td>
-							</tr>
-							<tr>
 								<td>משתמשים רשומים</td>
-								<td>888</td>
+								<td>{totalUsers}</td>
 							</tr>
 							<tr>
 								<td>סה"כ מוצרים</td>
-								<td>888</td>
+								<td>{totalItems}</td>
 							</tr>
 							<tr>
 								<td>עסקאות מוצלחות</td>
-								<td>888</td>
+								<td>{totalDeals}</td>
 							</tr>
 						</tbody>
 					</Table>
 				</Col>
 				<Col xl={4} md={4} sm={10} xs={10}>
-					<h5 className='text-center mb-3 font-weight-bold'>עקבו אחרינו</h5>
-					<Row>
+					<h5 className='text-center  font-weight-bold'>עקבו אחרינו</h5>
+					<Row className=' mt-3 '>
 						<Col>
 							<Media as="li">
 								<Media.Body>

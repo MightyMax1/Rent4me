@@ -297,6 +297,23 @@ async function getReviews(id) {
 	}
 }
 
+async function getFooterData() {
+	try {
+		const mongoClient = await getMongoClient();
+		// define users collection
+		collection_users = await mongoClient.db('rentme').collection('users');
+		collection_orders = await mongoClient.db('rentme').collection('orders');
+		collection_items = await mongoClient.db('rentme').collection('items');
+
+		const totalUsers = await collection_users.find({}).count();
+		const totalOrders = await collection_orders.find({ status: 'CONFIRM_ITEM_BY_LESSOR' }).count();
+		const totalItems = await collection_items.find({}).count();
+
+
+		return { totalUsers, totalOrders, totalItems };
+	} catch (error) { }
+}
+
 
 
 module.exports = {
@@ -316,4 +333,5 @@ module.exports = {
 	getItemsByWordSearch,
 	AddReview,
 	getReviews,
+	getFooterData,
 };

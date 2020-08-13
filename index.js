@@ -60,6 +60,16 @@ async function privateApi(req, res, next) {
 	}
 }
 
+app.get('/footerData', async (req, res) => {
+	try {
+		const footerData = await db.getFooterData();
+		res.json(footerData);
+	} catch (error) {
+		res.json(error.message);
+		console.log(error.message)
+	}
+})
+
 app.get('/auth/currentUser', privateApi, async (req, res) => {
 	try {
 		res.json(req.user);
