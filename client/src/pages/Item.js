@@ -24,9 +24,10 @@ const Item = ({ user }) => {
 	const [startDate, setStartDate] = useState('');
 	const [endDate, setEndDate] = useState('');
 	const [reviews, setReviews] = useState([]);
-
 	const [message, setMessage] = useState('');
-
+	const [totalPrice, setTotalPrice] = useState(0);
+	const [itemOrders, setItemOrders] = useState(0);
+	const [totalLessorData, setTotalLessorData] = useState({});
 	const [show, setShow] = useState(false); //show modal message
 
 	//handle modal show/close
@@ -41,14 +42,25 @@ const Item = ({ user }) => {
 			const data = await Api.getReviews(id);
 			setReviews(data);
 		};
-		async function getItem() {
+		async function getItemDetails() {
 			const data = await Api.getItemById(id);
 			setItem(data.itemDetails);
 			setLessor(data.lessor);
+			setTotalLessorData({
+				totalItems: data.totalItemsOwn,
+				totalOrders: data.totalLessorOrders,
+			});
 		};
 
-		getItem();
+		async function getItemsOrders() {
+			const data = await Api.getOrdersByItemId(id);
+			setItemOrders(data);
+			console.log('orders:', data)
+		}
+
+		getItemDetails();
 		getReviews();
+		getItemsOrders();
 		window.scrollTo(0, 0); //scroll to top when page load
 	}, []);
 
@@ -127,8 +139,8 @@ const Item = ({ user }) => {
 								{lessor.firstName} {lessor.lastName}{' '}
 							</Card.Title>
 							<Card.Text>
-								<p>סה"כ מוצרים: 123</p>
-								<p>סה"כ עסקאות: 123</p>
+								<p>סה"כ מוצרים: {totalLessorData.totalItems}</p>
+								<p>סה"כ עסקאות: {totalLessorData.totalOrders}</p>
 								<p>משתמש פעיל מתאריך {formatDate(lessor.createdAt)}</p>
 							</Card.Text>
 							<Button variant={varientBtn} size="md" disabled={!userExist} onClick={handleShow} block>
@@ -169,7 +181,7 @@ const Item = ({ user }) => {
 				<Card as={Col} xl={3} md={3} border="info" className="ml-1 mt-1 d-none d-sm-block .d-sm-none .d-md-block">
 					<Card.Header className="text-right">פרטים נוספים</Card.Header>
 					<Card.Body className="text-right">
-						<li>הושכר X פעמים</li>
+						<li>הושכר {itemOrders.length} פעמים</li>
 						<li className="pt-3">סה"כ חוות דעת {reviews.length}</li>
 					</Card.Body>
 				</Card>

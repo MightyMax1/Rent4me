@@ -149,6 +149,21 @@ router.get('/ordersByUserId', async (req, res) => {
 	}
 });
 
+// get all order by Item id
+router.get('/ordersByItemId', async (req, res) => {
+	try {
+
+		const { id } = req.query;
+		const orders = await db.getOrdersByItemId(id);
+		res.json(orders);
+	} catch (err) {
+		console.log('get ordersByItemId err: ', err.message);
+		res.status(500).json({
+			err: err.message,
+		});
+	}
+});
+
 // get items by word search
 router.get('/itemsBySearch', async (req, res) => {
 	try {

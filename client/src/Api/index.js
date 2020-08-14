@@ -24,6 +24,11 @@ function Api() {
 			return data;
 		},
 
+		getOrdersByItemId: async (itemID) => {
+			const data = await myFetch(`/products/ordersByItemId?id=${itemID}`);
+			return data;
+		},
+
 		getItemsBySearchWord: async word => {
 			const data = await myFetch(`/products/itemsBySearch?searchWord=${word}`);
 			return data;

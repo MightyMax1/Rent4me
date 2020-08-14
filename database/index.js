@@ -103,6 +103,8 @@ async function getItemById(id) {
 		collection_items = mongoClient.db('rentme').collection('items');
 		// define users collection
 		collection_users = mongoClient.db('rentme').collection('users');
+		// define orders collection
+		collection_orders = mongoClient.db('rentme').collection('orders');
 
 		const ObjectId = require('mongodb').ObjectID;
 		// find item by id
@@ -110,7 +112,11 @@ async function getItemById(id) {
 
 		const lessor = await collection_users.findOne({ _id: ObjectId(itemDetails.userId) });
 
-		return { itemDetails, lessor };
+		const totalItemsOwn = await collection_items.find({ userId: ObjectId(itemDetails.userId) }).count();
+
+		const totalLessorOrders = await collection_orders.find({ lessorId: itemDetails.userId.toString() }).count();
+
+		return { itemDetails, lessor, totalItemsOwn, totalLessorOrders };
 	} catch (error) {
 		console.log(error.message);
 	}
@@ -219,6 +225,20 @@ async function getOrdersByUserId(userId, userType) {
 			orders = await ordersCollection.find({ lesseeId: userId }).toArray();
 		}
 
+		return orders;
+	} catch (error) {
+		console.log('getOrders err', err.message);
+	}
+}
+
+async function getOrdersByItemId(itemID) {
+	try {
+		// get mongo connection
+		const mongoClient = await getMongoClient();
+		// define users collection
+		ordersCollection = mongoClient.db('rentme').collection('orders');
+		// find orders by itemID 
+		orders = await ordersCollection.find({ itemId: itemID }).toArray();
 		return orders;
 	} catch (error) {
 		console.log('getOrders err', err.message);
@@ -334,4 +354,5 @@ module.exports = {
 	AddReview,
 	getReviews,
 	getFooterData,
+	getOrdersByItemId,
 };
