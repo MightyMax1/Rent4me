@@ -11,7 +11,7 @@ import 'react-datetime/css/react-datetime.css';
 import moment from 'moment';
 import 'moment/locale/he';
 
-import { differenceInCalendarDays } from 'date-fns';
+import { differenceInCalendarDays, differenceInHours } from 'date-fns';
 
 moment.locale('he');
 
@@ -21,8 +21,8 @@ const Item = ({ user }) => {
 	const [item, setItem] = useState({});
 	const [lessor, setLessor] = useState({});
 	const [index, setIndex] = useState(0); //Carousel
-	const [startDate, setStartDate] = useState('');
-	const [endDate, setEndDate] = useState('');
+	const [startDate, setStartDate] = useState(null);
+	const [endDate, setEndDate] = useState(null);
 	const [reviews, setReviews] = useState([]);
 	const [message, setMessage] = useState('');
 	const [totalPrice, setTotalPrice] = useState(0);
@@ -95,11 +95,21 @@ const Item = ({ user }) => {
 		return current.isAfter(yesterday);
 	}
 
+	function calculateTotalPrice() {
+		if (endDate && startDate) {
+			const hourDiffenece = differenceInHours(new Date(endDate), new Date(startDate));
+			const dayDiffenece = differenceInCalendarDays(new Date(endDate), new Date(startDate));
+			if (hourDiffenece < 24) {
+				setTotalPrice(Number(item.priceHour) * hourDiffenece)
+			} else {
+				setTotalPrice(Number(item.priceDay) * dayDiffenece)
+			}
+
+		}
+	}
+
 	async function submitOrder() {
 		//TODO: validate order dates  & user existesne
-		const dayDiffenece = differenceInCalendarDays(new Date(endDate), new Date(startDate));
-		const totalPrice = dayDiffenece * Number(item.priceDay);
-
 		try {
 			const body = {
 				user: user, //lessee
@@ -194,15 +204,23 @@ const Item = ({ user }) => {
 						<Row>
 							<Col md={4} sm={12} xs={12}>
 								<Card.Title>התחלה</Card.Title>
-								<Datetime isValidDate={getValid} inputProps={{ name: 'startRent' }} onChange={e => setStartDate(e.format())} />
+								<Datetime
+									isValidDate={getValid}
+									inputProps={{ name: 'startRent' }}
+									onChange={e => setStartDate(e.format())}
+									onBlur={calculateTotalPrice} />
 							</Col>
 							<Col md={4} sm={12} xs={12}>
 								<Card.Title>סיום</Card.Title>
-								<Datetime isValidDate={getValid} inputProps={{ name: 'endRent' }} onChange={e => setEndDate(e.format())} />
+								<Datetime
+									isValidDate={getValid}
+									inputProps={{ name: 'endRent' }}
+									onChange={e => setEndDate(e.format())}
+									onBlur={calculateTotalPrice} />
 							</Col>
 							<Col md={4} sm={12} xs={12}>
 								<h5>סה"כ</h5>
-								<p> &#x20aa; 182 </p>
+								<p> &#x20aa; {totalPrice} </p>
 								<Button variant={varientBtn} disabled={!userExist} onClick={submitOrder} block>
 									הזמן
 								</Button>
