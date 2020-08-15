@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link, useHistory } from 'react-router-dom';
 import { Container, Row, Col, Carousel, Badge, Card, Image, Button, Alert, Modal, Form } from 'react-bootstrap';
 import Api from '../Api';
+import Rating from 'react-rating'; // https://github.com/dreyescat/react-rating
 
 //date-time picker  https://github.com/YouCanBookMe/react-datetime
 import * as Datetime from 'react-datetime';
@@ -10,7 +11,7 @@ import 'react-datetime/css/react-datetime.css';
 import moment from 'moment';
 import 'moment/locale/he';
 
-import { differenceInCalendarDays } from 'date-fns';
+import { differenceInCalendarDays, differenceInHours } from 'date-fns';
 
 moment.locale('he');
 
@@ -20,11 +21,13 @@ const Item = ({ user }) => {
 	const [item, setItem] = useState({});
 	const [lessor, setLessor] = useState({});
 	const [index, setIndex] = useState(0); //Carousel
-	const [startDate, setStartDate] = useState('');
-	const [endDate, setEndDate] = useState('');
-
+	const [startDate, setStartDate] = useState(null);
+	const [endDate, setEndDate] = useState(null);
+	const [reviews, setReviews] = useState([]);
 	const [message, setMessage] = useState('');
-
+	const [totalPrice, setTotalPrice] = useState(0);
+	const [itemOrders, setItemOrders] = useState(0);
+	const [totalLessorData, setTotalLessorData] = useState({});
 	const [show, setShow] = useState(false); //show modal message
 
 	//handle modal show/close
@@ -33,7 +36,33 @@ const Item = ({ user }) => {
 
 	const userExist = user ? true : false;
 	const varientBtn = user ? 'primary' : 'dark';
-	console.log(varientBtn);
+
+	useEffect(() => {
+		async function getReviews() {
+			const data = await Api.getReviews(id);
+			setReviews(data);
+		};
+		async function getItemDetails() {
+			const data = await Api.getItemById(id);
+			setItem(data.itemDetails);
+			setLessor(data.lessor);
+			setTotalLessorData({
+				totalItems: data.totalItemsOwn,
+				totalOrders: data.totalLessorOrders,
+			});
+		};
+
+		async function getItemsOrders() {
+			const data = await Api.getOrdersByItemId(id);
+			setItemOrders(data);
+			console.log('orders:', data)
+		}
+
+		getItemDetails();
+		getReviews();
+		getItemsOrders();
+		window.scrollTo(0, 0); //scroll to top when page load
+	}, []);
 
 	//Carousel  handle
 	const handleSelect = (selectedIndex, e) => {
@@ -52,23 +81,8 @@ const Item = ({ user }) => {
 		console.log('lessor', lessor);
 		// send message to server with socket
 		window.socket.emit('MESSAGE', { user, message, receiver: lessor });
+		handleClose();
 	};
-
-	// run after every render (by default)
-	useEffect(() => {
-		console.log('useEffect...');
-
-		async function getItem() {
-			const data = await Api.getItemById(id);
-			console.log('data', data);
-
-			console.log('item data', data.itemDetails);
-			setItem(data.itemDetails);
-			setLessor(data.lessor);
-		}
-		getItem();
-		window.scrollTo(0, 0); //scroll to top when page load
-	}, []);
 
 	function formatDate(date) {
 		let d = new Date(date);
@@ -81,11 +95,21 @@ const Item = ({ user }) => {
 		return current.isAfter(yesterday);
 	}
 
+	function calculateTotalPrice() {
+		if (endDate && startDate) {
+			const hourDiffenece = differenceInHours(new Date(endDate), new Date(startDate));
+			const dayDiffenece = differenceInCalendarDays(new Date(endDate), new Date(startDate));
+			if (hourDiffenece < 24) {
+				setTotalPrice(Number(item.priceHour) * hourDiffenece)
+			} else {
+				setTotalPrice(Number(item.priceDay) * dayDiffenece)
+			}
+
+		}
+	}
+
 	async function submitOrder() {
 		//TODO: validate order dates  & user existesne
-		const dayDiffenece = differenceInCalendarDays(new Date(endDate), new Date(startDate));
-		const totalPrice = dayDiffenece * Number(item.priceDay);
-
 		try {
 			const body = {
 				user: user, //lessee
@@ -125,8 +149,8 @@ const Item = ({ user }) => {
 								{lessor.firstName} {lessor.lastName}{' '}
 							</Card.Title>
 							<Card.Text>
-								<p>סה"כ מוצרים: 123</p>
-								<p>סה"כ עסקאות: 123</p>
+								<p>סה"כ מוצרים: {totalLessorData.totalItems}</p>
+								<p>סה"כ עסקאות: {totalLessorData.totalOrders}</p>
 								<p>משתמש פעיל מתאריך {formatDate(lessor.createdAt)}</p>
 							</Card.Text>
 							<Button variant={varientBtn} size="md" disabled={!userExist} onClick={handleShow} block>
@@ -167,8 +191,8 @@ const Item = ({ user }) => {
 				<Card as={Col} xl={3} md={3} border="info" className="ml-1 mt-1 d-none d-sm-block .d-sm-none .d-md-block">
 					<Card.Header className="text-right">פרטים נוספים</Card.Header>
 					<Card.Body className="text-right">
-						<li>הושכר X פעמים</li>
-						<li className="pt-3">סה"כ חוות דעת X</li>
+						<li>הושכר {itemOrders.length} פעמים</li>
+						<li className="pt-3">סה"כ חוות דעת {reviews.length}</li>
 					</Card.Body>
 				</Card>
 			</Row>
@@ -180,15 +204,23 @@ const Item = ({ user }) => {
 						<Row>
 							<Col md={4} sm={12} xs={12}>
 								<Card.Title>התחלה</Card.Title>
-								<Datetime isValidDate={getValid} inputProps={{ name: 'startRent' }} onChange={e => setStartDate(e.format())} />
+								<Datetime
+									isValidDate={getValid}
+									inputProps={{ name: 'startRent' }}
+									onChange={e => setStartDate(e.format())}
+									onBlur={calculateTotalPrice} />
 							</Col>
 							<Col md={4} sm={12} xs={12}>
 								<Card.Title>סיום</Card.Title>
-								<Datetime isValidDate={getValid} inputProps={{ name: 'endRent' }} onChange={e => setEndDate(e.format())} />
+								<Datetime
+									isValidDate={getValid}
+									inputProps={{ name: 'endRent' }}
+									onChange={e => setEndDate(e.format())}
+									onBlur={calculateTotalPrice} />
 							</Col>
 							<Col md={4} sm={12} xs={12}>
 								<h5>סה"כ</h5>
-								<p> &#x20aa; 182 </p>
+								<p> &#x20aa; {totalPrice} </p>
 								<Button variant={varientBtn} disabled={!userExist} onClick={submitOrder} block>
 									הזמן
 								</Button>
@@ -206,64 +238,37 @@ const Item = ({ user }) => {
 					חוות דעת
 				</Badge>
 			</h2>
-			<Row dir="rtl" border="primary" className="mt-3">
-				<Col xl={2} md={2} sm={5} xs={5}>
-					<Image src="https://cdn.icon-icons.com/icons2/1371/PNG/512/robot02_90810.png" thumbnail />
-				</Col>
-				<Card as={Col}>
-					<Card.Header as={Row}>
-						<Col className="text-right font-weight-bold"> מוחמד אבוקסיס</Col>
-						<Col className="text-left font-weight-light text-muted"> 01.01.2020</Col>
-					</Card.Header>
-					<Card.Body>
-						<Card.Text className="text-right">
-							במוקדמות מונדיאל 1958 הייתה נבחרת ישראל בכדורגל על סף העפלה לטורניר ללא ששיחקה אפילו משחק אחד, לאחר שכל הנבחרות מולן
-							הוגרלה סירבו לשחק נגדה. היא העפילה לסיבוב המוקדמות השני לאחר סירובה של טורקיה, ולסיבוב השלישי לאחר סירובן של
-							אינדונזיה ומצרים. בסיבוב השלישי הייתה אמורה ישראל להתמודד מול סודאן, ובעקבות סירובה הייתה אמורה להעפיל אוטומטית
-							למונדיאל בשוודיה. אולם, פיפ"א התנגדה לכך שנבחרת כלשהי תעפיל לטורניר ללא ששיחקה כלל במוקדמות, וקבעה כי ישראל תשחק נגד
-							אחת מסגניות בתי המוקדמות של אופ"א
-						</Card.Text>
-					</Card.Body>
-				</Card>
-			</Row>
-			<Row dir="rtl" border="primary" className="mt-3">
-				<Col xl={2} md={2} sm={5} xs={5}>
-					<Image src="https://static.thenounproject.com/png/2643420-200.png" thumbnail />
-				</Col>
-				<Card as={Col}>
-					<Card.Header as={Row}>
-						<Col className="text-right font-weight-bold"> אלי אן</Col>
-						<Col className="text-left font-weight-light text-muted"> 01.01.2020</Col>
-					</Card.Header>
-					<Card.Body>
-						<Card.Text className="text-right">
-							על אף שארצות הברית ובריטניה לחמו זו בזו מספר פעמים, כאשר משתמשים במונח "הפלישה הבריטית", אין הכוונה לפלישה צבאית,
-							אלא לגל סיבובי ההופעות של הביטלס, האבנים המתגלגלות, המי ולהקות בריטיות נוספות בארצות הברית, בשנות ה-60.
-						</Card.Text>
-					</Card.Body>
-				</Card>
-			</Row>
-			<Row dir="rtl" border="primary" className="mt-3">
-				<Col xl={2} md={2} sm={5} xs={5}>
-					<Image
-						src="https://cdn4.iconfinder.com/data/icons/diversity-v2-0-volume-03/64/superhero-deadpool-comics-512.png"
-						thumbnail
-					/>
-				</Col>
-				<Card as={Col}>
-					<Card.Header as={Row}>
-						<Col className="text-right font-weight-bold">deadpool</Col>
-						<Col className="text-left font-weight-light text-muted"> 01.01.2020</Col>
-					</Card.Header>
-					<Card.Body>
-						<Card.Text className="text-right">
-							על כפות המאזניים הנחת משקולת ברזל ומנגד ערימת נוצות. בשפי ובנחת הוספת והחסרת נוצות עד שהמאזניים מאוזנים למשעי. מיד
-							לאחר מכן גנבת חללית אפולו, הטענת בה את המאזניים, המשקולת והנוצות, וטסת לירח. על קרקע הירח שוב ביצעת את המדידה. מה
-							יראו המאזניים כעת?
-						</Card.Text>
-					</Card.Body>
-				</Card>
-			</Row>
+			{reviews && reviews.map((review) => {
+				return (
+					<Row dir="rtl" border="primary" className="mt-3">
+						<Col xl={2} md={2} sm={5} xs={5}>
+							<Image src={review.lessee.profileImg} thumbnail />
+						</Col>
+						<Card as={Col} key={review._id}>
+							<Card.Header as={Row}>
+								<Col sm={10} xs={10} className="text-right font-weight-bold">{review.lessee.fullName}</Col>
+
+								<Col sm={10} xs={10} className="text-left font-weight-light text-muted">{formatDate(review.createdAt)}</Col>
+							</Card.Header>
+							<Card.Body>
+								<Card.Text className="text-right">{review.review}</Card.Text>
+							</Card.Body>
+							<Card.Footer>
+								<Rating
+									readonly={true}
+									initialRating={review.itemRate}
+									emptySymbol={<svg width="2em" height="2em" viewBox="0 0 16 16" class="bi bi-star" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+										<path fill-rule="evenodd" d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.523-3.356c.329-.314.158-.888-.283-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767l-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288l1.847-3.658 1.846 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.564.564 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z" />
+									</svg>}
+									fullSymbol={<svg width="2em" height="2em" viewBox="0 0 16 16" class="bi bi-star-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+										<path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.283.95l-3.523 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
+									</svg>}
+								/>
+							</Card.Footer>
+						</Card>
+					</Row>
+				);
+			})}
 
 			<Modal show={show} onHide={handleClose}>
 				<Modal.Header closeButton>

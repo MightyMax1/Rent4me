@@ -73,7 +73,7 @@ async function getProductsAndCategories() {
 		const categories = await collection_categories.find({}).toArray();
 
 		return { categories, newProducts };
-	} catch (error) {}
+	} catch (error) { }
 }
 
 async function getProductsByCategoryId(id) {
@@ -103,6 +103,8 @@ async function getItemById(id) {
 		collection_items = mongoClient.db('rentme').collection('items');
 		// define users collection
 		collection_users = mongoClient.db('rentme').collection('users');
+		// define orders collection
+		collection_orders = mongoClient.db('rentme').collection('orders');
 
 		const ObjectId = require('mongodb').ObjectID;
 		// find item by id
@@ -110,7 +112,11 @@ async function getItemById(id) {
 
 		const lessor = await collection_users.findOne({ _id: ObjectId(itemDetails.userId) });
 
-		return { itemDetails, lessor };
+		const totalItemsOwn = await collection_items.find({ userId: ObjectId(itemDetails.userId) }).count();
+
+		const totalLessorOrders = await collection_orders.find({ lessorId: itemDetails.userId.toString() }).count();
+
+		return { itemDetails, lessor, totalItemsOwn, totalLessorOrders };
 	} catch (error) {
 		console.log(error.message);
 	}
@@ -141,7 +147,7 @@ async function getCategories() {
 		const categories = await collection_categories.find({}).toArray();
 
 		return { categories };
-	} catch (error) {}
+	} catch (error) { }
 }
 
 async function AddProduct(product, userEmail) {
@@ -225,6 +231,20 @@ async function getOrdersByUserId(userId, userType) {
 	}
 }
 
+async function getOrdersByItemId(itemID) {
+	try {
+		// get mongo connection
+		const mongoClient = await getMongoClient();
+		// define users collection
+		ordersCollection = mongoClient.db('rentme').collection('orders');
+		// find orders by itemID 
+		orders = await ordersCollection.find({ itemId: itemID }).toArray();
+		return orders;
+	} catch (error) {
+		console.log('getOrders err', err.message);
+	}
+}
+
 async function getItemsByUserId(userId) {
 	try {
 		// get mongo connection
@@ -262,6 +282,60 @@ async function getItemsByWordSearch(searchWord) {
 	}
 }
 
+async function AddReview(review) {
+	try {
+		// get mongo connection
+		const mongoClient = await getMongoClient();
+		// define  collection
+		reviewsCollection = mongoClient.db('rentme').collection('reviews');
+
+		// insert new review
+		const result = await reviewsCollection.insertOne(review);
+
+		// return the review  from db (with inserted _id)
+		return result.ops[0];
+
+	} catch (error) {
+		console.log('AddReview err', err.message);
+	}
+}
+
+async function getReviews(id) {
+	try {
+		// get mongo connection
+		const mongoClient = await getMongoClient();
+		// define  collection
+		reviewsCollection = mongoClient.db('rentme').collection('reviews');
+		// find reviews by item id
+		const result = await reviewsCollection.find({ itemID: id }).sort({ createdAt: -1 }).toArray();
+
+		// return the reviews  
+		return result;
+
+	} catch (error) {
+		console.log('getReviews err', err.message);
+	}
+}
+
+async function getFooterData() {
+	try {
+		const mongoClient = await getMongoClient();
+		// define users collection
+		collection_users = await mongoClient.db('rentme').collection('users');
+		collection_orders = await mongoClient.db('rentme').collection('orders');
+		collection_items = await mongoClient.db('rentme').collection('items');
+
+		const totalUsers = await collection_users.find({}).count();
+		const totalOrders = await collection_orders.find({ status: 'CONFIRM_ITEM_BY_LESSOR' }).count();
+		const totalItems = await collection_items.find({}).count();
+
+
+		return { totalUsers, totalOrders, totalItems };
+	} catch (error) { }
+}
+
+
+
 module.exports = {
 	getProductsAndCategories,
 	getUserByEmail,
@@ -277,4 +351,8 @@ module.exports = {
 	users,
 	getItemsByUserId,
 	getItemsByWordSearch,
+	AddReview,
+	getReviews,
+	getFooterData,
+	getOrdersByItemId,
 };

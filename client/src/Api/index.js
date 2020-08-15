@@ -24,6 +24,11 @@ function Api() {
 			return data;
 		},
 
+		getOrdersByItemId: async (itemID) => {
+			const data = await myFetch(`/products/ordersByItemId?id=${itemID}`);
+			return data;
+		},
+
 		getItemsBySearchWord: async word => {
 			const data = await myFetch(`/products/itemsBySearch?searchWord=${word}`);
 			return data;
@@ -40,6 +45,10 @@ function Api() {
 			return data;
 		},
 
+		sendItemReview: async body => myFetch('/products/addReview', 'POST', body),
+
+		getReviews: async id => myFetch(`/products/getReview?itemID=${id}`),
+
 		login: async body => {
 			const data = await myFetch('/auth/login', 'POST', body);
 			return data;
@@ -47,6 +56,7 @@ function Api() {
 
 		// users
 		getCurrentUser: async () => await myFetch('/auth/currentUser'),
+
 		getUserById: async id => await myFetch(`/users/${id}`),
 
 		getCategories: async () => await myFetch('/products/categories'),
@@ -74,9 +84,12 @@ function Api() {
 		// messages
 		getMessageByChatId: async id => myFetch(`/messages/chat/${id}`),
 
-		// chats
+		// chats 
 		getChatsByUserId: async id => await myFetch(`/chats/user/${id}`),
+
+		getFooterData: async () => await myFetch('/footerData'),
 	};
+
 }
 
 const api = Api();

@@ -149,6 +149,21 @@ router.get('/ordersByUserId', async (req, res) => {
 	}
 });
 
+// get all order by Item id
+router.get('/ordersByItemId', async (req, res) => {
+	try {
+
+		const { id } = req.query;
+		const orders = await db.getOrdersByItemId(id);
+		res.json(orders);
+	} catch (err) {
+		console.log('get ordersByItemId err: ', err.message);
+		res.status(500).json({
+			err: err.message,
+		});
+	}
+});
+
 // get items by word search
 router.get('/itemsBySearch', async (req, res) => {
 	try {
@@ -178,5 +193,37 @@ router.get('/getItemsByLessorID', async (req, res) => {
 		});
 	}
 });
+
+router.post('/addReview', async (req, res) => {
+	try {
+
+		//add additional data to review
+		req.body['createdAt'] = Date();
+
+		// add review to db
+		const newReview = await db.AddReview(req.body);
+
+		res.json('success');
+
+	} catch (err) {
+		console.log('add review err: ', err.message);
+		res.status(500).json({
+			err: err.message,
+		});
+	}
+})
+
+router.get('/getReview', async (req, res) => {
+	try {
+		const { itemID } = req.query;
+		const reviews = await db.getReviews(itemID);
+		res.json(reviews);
+	} catch (err) {
+		console.log('get Review err: ', err.message);
+		res.status(500).json({
+			err: err.message,
+		});
+	}
+})
 
 module.exports = router;

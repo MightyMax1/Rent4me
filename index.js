@@ -60,6 +60,16 @@ async function privateApi(req, res, next) {
 	}
 }
 
+app.get('/footerData', async (req, res) => {
+	try {
+		const footerData = await db.getFooterData();
+		res.json(footerData);
+	} catch (error) {
+		res.json(error.message);
+		console.log(error.message)
+	}
+})
+
 app.get('/auth/currentUser', privateApi, async (req, res) => {
 	try {
 		res.json(req.user);
@@ -199,11 +209,12 @@ ioServer.on('connection', client => {
 
 		let chat = null;
 		// ckeck if chat exits
-		chat = await db.chats.getChatByParticipants([user._id, data.receiver._id]);
+		chat = await db.chats.getChatByParticipants([user._id.toString, data.receiver._id]);
 
 		if (!chat) {
 			// if chat not exists create new chat
 			chat = await db.chats.createChat([user._id.toString(), data.receiver._id]);
+			chat = chat.ops[0] // result
 		}
 		// create message in db add chat id to message
 		const newMessage = await db.messages.createMessage({
