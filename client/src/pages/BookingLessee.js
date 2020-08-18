@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, CardGroup, Card, Button, Modal, Badge } from 'react-bootstrap';
-import { differenceInCalendarDays, format } from 'date-fns';
+import { differenceInCalendarDays, differenceInHours, format } from 'date-fns';
 import Api from '../Api';
 
 const STATUSES = {
@@ -11,7 +11,7 @@ const STATUSES = {
 };
 
 const hebrewText = {
-    totalDays: 'סהכ ימים:',
+    totalRentTime: 'זמן השכרה: ',
     totalPrice: 'סהכ לתשלום',
     rentStart: 'תחילת שכירות',
     retnEnd: 'סיום שכירות',
@@ -54,6 +54,16 @@ const BookingLessee = ({ user }) => {
     }, []);
 
     const dateFormate = (date) => format(new Date(date), "dd-MM-yyyy HH:mm")
+
+    function getTotalTime(start, end) {
+        const hourDiffenece = differenceInHours(new Date(end), new Date(start));
+        const dayDiffenece = differenceInCalendarDays(new Date(end), new Date(start));
+        if (hourDiffenece < 24) {
+            return `שעות ${hourDiffenece}`
+        } else {
+            return ` ימים ${dayDiffenece}`
+        }
+    }
 
     const filterOrders = (orders) => {
         const filtredOrders = orders.filter(order => {
@@ -120,8 +130,8 @@ const BookingLessee = ({ user }) => {
                 </Modal.Header>
                 <Modal.Body className="text-right">
                     <p>
-                        {hebrewText.totalDays}
-                        {differenceInCalendarDays(new Date(selectedOrder.startRent), new Date(selectedOrder.endRent))}
+                        {hebrewText.totalRentTime}
+                        {getTotalTime(new Date(selectedOrder.startRent), new Date(selectedOrder.endRent))}
                     </p>
                     <p>{`${hebrewText.totalPrice}: ${selectedOrder.totalPrice}`}</p>
                     <p>{`${hebrewText.lessorName}: ${selectedOrder.lesseeFullName}`}</p>
