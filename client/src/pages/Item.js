@@ -35,6 +35,7 @@ const Item = ({ user }) => {
 	const handleShow = () => setShow(true);
 
 	const userExist = user ? true : false;
+	const userIsLessor = (userExist && user._id == lessor._id) ? true : false;
 	const varientBtn = user ? 'primary' : 'dark';
 
 	useEffect(() => {
@@ -221,7 +222,11 @@ const Item = ({ user }) => {
 							<Col md={4} sm={12} xs={12}>
 								<h5>סה"כ</h5>
 								<p> &#x20aa; {totalPrice} </p>
-								<Button variant={varientBtn} disabled={!userExist} onClick={submitOrder} block>
+								<Button
+									variant={user && !userIsLessor ? 'primary' : 'dark'}
+									disabled={(!userExist || userIsLessor)}
+									onClick={submitOrder}
+									block>
 									הזמן
 								</Button>
 							</Col>
@@ -238,37 +243,39 @@ const Item = ({ user }) => {
 					חוות דעת
 				</Badge>
 			</h2>
-			{reviews && reviews.map((review) => {
-				return (
-					<Row dir="rtl" border="primary" className="mt-3">
-						<Col xl={2} md={2} sm={5} xs={5}>
-							<Image src={review.lessee.profileImg} thumbnail />
-						</Col>
-						<Card as={Col} key={review._id}>
-							<Card.Header as={Row}>
-								<Col sm={10} xs={10} className="text-right font-weight-bold">{review.lessee.fullName}</Col>
+			{
+				reviews && reviews.map((review) => {
+					return (
+						<Row dir="rtl" border="primary" className="mt-3">
+							<Col xl={2} md={2} sm={5} xs={5}>
+								<Image src={review.lessee.profileImg} thumbnail />
+							</Col>
+							<Card as={Col} key={review._id}>
+								<Card.Header as={Row}>
+									<Col sm={10} xs={10} className="text-right font-weight-bold">{review.lessee.fullName}</Col>
 
-								<Col sm={10} xs={10} className="text-left font-weight-light text-muted">{formatDate(review.createdAt)}</Col>
-							</Card.Header>
-							<Card.Body>
-								<Card.Text className="text-right">{review.review}</Card.Text>
-							</Card.Body>
-							<Card.Footer>
-								<Rating
-									readonly={true}
-									initialRating={review.itemRate}
-									emptySymbol={<svg width="2em" height="2em" viewBox="0 0 16 16" class="bi bi-star" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-										<path fill-rule="evenodd" d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.523-3.356c.329-.314.158-.888-.283-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767l-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288l1.847-3.658 1.846 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.564.564 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z" />
-									</svg>}
-									fullSymbol={<svg width="2em" height="2em" viewBox="0 0 16 16" class="bi bi-star-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-										<path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.283.95l-3.523 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
-									</svg>}
-								/>
-							</Card.Footer>
-						</Card>
-					</Row>
-				);
-			})}
+									<Col sm={10} xs={10} className="text-left font-weight-light text-muted">{formatDate(review.createdAt)}</Col>
+								</Card.Header>
+								<Card.Body>
+									<Card.Text className="text-right">{review.review}</Card.Text>
+								</Card.Body>
+								<Card.Footer>
+									<Rating
+										readonly={true}
+										initialRating={review.itemRate}
+										emptySymbol={<svg width="2em" height="2em" viewBox="0 0 16 16" class="bi bi-star" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+											<path fill-rule="evenodd" d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.523-3.356c.329-.314.158-.888-.283-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767l-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288l1.847-3.658 1.846 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.564.564 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z" />
+										</svg>}
+										fullSymbol={<svg width="2em" height="2em" viewBox="0 0 16 16" class="bi bi-star-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+											<path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.283.95l-3.523 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
+										</svg>}
+									/>
+								</Card.Footer>
+							</Card>
+						</Row>
+					);
+				})
+			}
 
 			<Modal show={show} onHide={handleClose}>
 				<Modal.Header closeButton>
@@ -283,7 +290,7 @@ const Item = ({ user }) => {
 					</Button>
 				</Modal.Footer>
 			</Modal>
-		</Container>
+		</Container >
 	);
 };
 
