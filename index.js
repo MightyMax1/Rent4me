@@ -160,9 +160,6 @@ app.post('/auth/signup', async (req, res) => {
 		// insert new user to users collection
 		const insertOpr = await collection.insertOne(form);
 
-		// console.log('insertOpr.opt', insertOpr.ops[0]);
-		// console.log('insertOpr.result', insertOpr.result);
-
 		const userDataRespone = {};
 		for (let key in insertOpr.ops[0]) {
 			if (key !== '_id' && key !== 'password') userDataRespone[key] = insertOpr.ops[0][key];
@@ -209,7 +206,7 @@ ioServer.on('connection', client => {
 
 		let chat = null;
 		// ckeck if chat exits
-		chat = await db.chats.getChatByParticipants([user._id.toString, data.receiver._id]);
+		chat = await db.chats.getChatByParticipants([user._id.toString(), data.receiver._id]);
 
 		if (!chat) {
 			// if chat not exists create new chat
@@ -224,7 +221,6 @@ ioServer.on('connection', client => {
 			chatId: chat._id,
 		});
 
-		console.log('newMessage', newMessage);
 		// send message from server to user(receiver)
 		ioServer.to(data.receiver._id).emit('MESSAGE', { message: data.message, user: user });
 	});
