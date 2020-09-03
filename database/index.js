@@ -6,13 +6,14 @@ const { ObjectID } = require('mongodb');
 const users = require('./users');
 const messages = require('./messages');
 
-// chat
+// get one chat of two participants
 async function getChatByParticipants(participants) {
 	try {
 		const mongoClient = await getMongoClient();
 		// define users collection
 		const messagesCollection = mongoClient.db('rentme').collection('chats');
 
+		console.log("participants:", participants)
 		const chat = await messagesCollection.findOne({ participants: { $all: participants } });
 
 		return chat;
@@ -20,14 +21,14 @@ async function getChatByParticipants(participants) {
 		console.log(error.message);
 	}
 }
-// chat
-async function getChatsByParticipants(participants) {
+// get all chats of  participant
+async function getChatsByParticipants(participant) {
 	try {
 		const mongoClient = await getMongoClient();
 		// define users collection
 		const messagesCollection = mongoClient.db('rentme').collection('chats');
 
-		const chat = await messagesCollection.find({ participants: { $all: participants } }).toArray();
+		const chat = await messagesCollection.find({ participants: { $all: participant } }).toArray();
 
 		return chat;
 	} catch (error) {

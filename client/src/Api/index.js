@@ -81,13 +81,15 @@ function Api() {
 			return data;
 		},
 
-		// messages
+
 		getMessageByChatId: async id => myFetch(`/messages/chat/${id}`),
 
-		// chats 
+
 		getChatsByUserId: async id => await myFetch(`/chats/user/${id}`),
 
 		getFooterData: async () => await myFetch('/footerData'),
+
+		getLastMessageByChatID: async chatID => await myFetch(`/messages/chatLastMsg/${chatID}`),
 	};
 
 }
