@@ -7,7 +7,11 @@ async function myFetch(url, method, body) {
 		};
 		options.body = body ? JSON.stringify(body) : undefined;
 
-		const res = await fetch(`http://localhost:4000${url}`, options);
+		let baseUrl = 'localhost:4000';
+		if (process.env.NODE_ENV === 'production') {
+			baseUrl = 'glacial-cliffs-91994.herokuapp.com';
+		}
+		const res = await fetch(`http://${baseUrl}${url}`, options);
 		const data = await res.json();
 		return data;
 	} catch (err) {
