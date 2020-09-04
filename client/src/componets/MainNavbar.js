@@ -48,7 +48,12 @@ function MainNavbar({ onLogin, onLogout, user }) {
 		const data = await Api.login(form);
 		localStorage.setItem('token', data.token);
 
-		window.socket = io(`http://localhost:4000?token=${data.token}`);
+		let baseUrl = 'localhost:4000';
+		if (process.env.NODE_ENV === 'production') {
+			baseUrl = 'glacial-cliffs-91994.herokuapp.com';
+		}
+
+		window.socket = io(`https://${baseUrl}?token=${data.token}`);
 		window.socket.on('connect', () => {
 			console.log('client id', window.socket.id);
 		});
@@ -91,8 +96,8 @@ function MainNavbar({ onLogin, onLogout, user }) {
 							שלום,{user.firstName}
 						</Badge>
 					) : (
-						''
-					)}
+							''
+						)}
 				</Navbar.Brand>
 			</Col>
 			<Col xl={{ span: 4, offset: 6 }} md={{ span: 5, offset: 5 }} sm={{ span: 2, offset: 8 }} xs={{ span: 3, offset: 7 }}>

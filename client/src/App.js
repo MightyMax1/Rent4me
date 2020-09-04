@@ -62,7 +62,7 @@ function App() {
 			if (process.env.NODE_ENV === 'production') {
 				baseUrl = 'glacial-cliffs-91994.herokuapp.com';
 			}
-			window.socket = io(`http://${baseUrl}?token=${token}`);
+			window.socket = io(`https://${baseUrl}?token=${token}`);
 			window.socket.on('connect', () => {
 				console.log('client id', window.socket.id);
 			});
