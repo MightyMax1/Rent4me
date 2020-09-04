@@ -4,6 +4,7 @@ const url = require('url');
 // import npm modules
 const express = require('express');
 const mongoClient = require('mongodb');
+const path = require('path');
 
 const io = require('socket.io');
 
@@ -225,6 +226,14 @@ ioServer.on('connection', client => {
 		ioServer.to(data.receiver._id).emit('MESSAGE', { message: data.message, user: user });
 	});
 });
+
+if (process.env.NODE_ENV === 'production') {
+	app.use(express.static('client/build'));
+
+	app.get('*', (req, res) => {
+		res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+	})
+}
 
 // process.env = allow us define variables before run script
 // define server port number

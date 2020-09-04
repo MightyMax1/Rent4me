@@ -12,7 +12,7 @@ let connection = null;
  */
 function getMongoClient() {
 	return new Promise((resolve, reject) => {
-		const url = 'mongodb://localhost:27017';
+		const url = process.env.MOGODB_URI || 'mongodb://localhost:27017';
 
 		if (connection) return resolve(connection);
 
