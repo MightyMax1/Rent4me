@@ -7,7 +7,11 @@ async function myFetch(url, method, body) {
 		};
 		options.body = body ? JSON.stringify(body) : undefined;
 
-		const res = await fetch(`http://localhost:4000${url}`, options);
+		let baseUrl = 'localhost:4000';
+		if (process.env.NODE_ENV === 'production') {
+			baseUrl = 'glacial-cliffs-91994.herokuapp.com';
+		}
+		const res = await fetch(`http://${baseUrl}${url}`, options);
 		const data = await res.json();
 		return data;
 	} catch (err) {
@@ -81,13 +85,15 @@ function Api() {
 			return data;
 		},
 
-		// messages
+
 		getMessageByChatId: async id => myFetch(`/messages/chat/${id}`),
 
-		// chats 
+
 		getChatsByUserId: async id => await myFetch(`/chats/user/${id}`),
 
 		getFooterData: async () => await myFetch('/footerData'),
+
+		getLastMessageByChatID: async chatID => await myFetch(`/messages/chatLastMsg/${chatID}`),
 	};
 
 }

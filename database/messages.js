@@ -7,7 +7,7 @@ async function getCollection() {
 	return mongoClient.db('rentme').collection('messages');
 }
 
-// chat
+
 async function getMessagesByChatId(id) {
 	try {
 		const messagesColl = await getCollection();
@@ -38,8 +38,25 @@ async function createMessage({ sender, message, receiver, chatId }) {
 
 		return result.ops[0];
 	} catch (error) {
-		console.log('AddProduct err', err.message);
+		console.log('AddProduct err', error.message);
 	}
 }
 
-module.exports = { createMessage, getMessagesByChatId, getMessageByUserId };
+async function getLastMsgByChatID(chatID) {
+	try {
+		console.log('chatID:', chatID)
+		const messagesColl = await getCollection();
+
+		const result = await messagesColl.find({ 'chatId': ObjectID(chatID) }).sort({ 'message.date': - 1 }).limit(1).toArray();
+		return result;
+	} catch (error) {
+		console.log('getLastMsg:', error.message)
+	}
+}
+
+module.exports = {
+	createMessage,
+	getMessagesByChatId,
+	getMessageByUserId,
+	getLastMsgByChatID
+};
