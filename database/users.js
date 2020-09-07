@@ -4,7 +4,7 @@ const { ObjectID } = require('mongodb');
 
 async function getCollection() {
 	const mongoClient = await getMongoClient();
-	return mongoClient.db('rentme').collection('users');
+	return mongoClient.db(process.env.DB_NAME).collection('users');
 }
 
 // chat

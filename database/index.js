@@ -11,7 +11,7 @@ async function getChatByParticipants(participants) {
 	try {
 		const mongoClient = await getMongoClient();
 		// define users collection
-		const messagesCollection = mongoClient.db('rentme').collection('chats');
+		const messagesCollection = mongoClient.db(process.env.DB_NAME).collection('chats');
 
 		console.log("participants:", participants)
 		const chat = await messagesCollection.findOne({ participants: { $all: participants } });
@@ -26,7 +26,7 @@ async function getChatsByParticipants(participant) {
 	try {
 		const mongoClient = await getMongoClient();
 		// define users collection
-		const messagesCollection = mongoClient.db('rentme').collection('chats');
+		const messagesCollection = mongoClient.db(process.env.DB_NAME).collection('chats');
 
 		const chat = await messagesCollection.find({ participants: { $all: participant } }).toArray();
 
@@ -40,7 +40,7 @@ async function createChat(participants) {
 	try {
 		const mongoClient = await getMongoClient();
 		// define users collection
-		const messagesCollection = mongoClient.db('rentme').collection('chats');
+		const messagesCollection = mongoClient.db(process.env.DB_NAME).collection('chats');
 
 		// find all products by category id
 		const chat = await messagesCollection.insertOne({ participants });
@@ -63,8 +63,8 @@ async function getProductsAndCategories() {
 	try {
 		const mongoClient = await getMongoClient();
 		// define users collection
-		collection_items = mongoClient.db('rentme').collection('items');
-		collection_categories = mongoClient.db('rentme').collection('categories');
+		collection_items = mongoClient.db(process.env.DB_NAME).collection('items');
+		collection_categories = mongoClient.db(process.env.DB_NAME).collection('categories');
 
 		// find all products & categories,
 		const newProducts = await collection_items.find({}).sort({ createdAt: -1 }).limit(4).toArray();
@@ -81,8 +81,8 @@ async function getProductsByCategoryId(id) {
 	try {
 		const mongoClient = await getMongoClient();
 		// define  collections
-		collection_items = mongoClient.db('rentme').collection('items');
-		collection_categories = mongoClient.db('rentme').collection('categories');
+		collection_items = mongoClient.db(process.env.DB_NAME).collection('items');
+		collection_categories = mongoClient.db(process.env.DB_NAME).collection('categories');
 
 		// find all products by category id
 		const itemsByCategory = await collection_items.find({ category_id: id }).toArray();
@@ -101,11 +101,11 @@ async function getItemById(id) {
 	try {
 		const mongoClient = await getMongoClient();
 		// define items collection
-		collection_items = mongoClient.db('rentme').collection('items');
+		collection_items = mongoClient.db(process.env.DB_NAME).collection('items');
 		// define users collection
-		collection_users = mongoClient.db('rentme').collection('users');
+		collection_users = mongoClient.db(process.env.DB_NAME).collection('users');
 		// define orders collection
-		collection_orders = mongoClient.db('rentme').collection('orders');
+		collection_orders = mongoClient.db(process.env.DB_NAME).collection('orders');
 
 		const ObjectId = require('mongodb').ObjectID;
 		// find item by id
@@ -128,7 +128,7 @@ async function getUserByEmail(email) {
 		const mongoClient = await getMongoClient();
 
 		// define users collection
-		userCollection = mongoClient.db('rentme').collection('users');
+		userCollection = mongoClient.db(process.env.DB_NAME).collection('users');
 
 		// find user by email in usres collection
 		const user = await userCollection.findOne({ email: email });
@@ -143,7 +143,7 @@ async function getCategories() {
 	try {
 		const mongoClient = await getMongoClient();
 		// define users collection
-		collection_categories = mongoClient.db('rentme').collection('categories');
+		collection_categories = mongoClient.db(process.env.DB_NAME).collection('categories');
 		// find all categories,
 		const categories = await collection_categories.find({}).toArray();
 
@@ -156,7 +156,7 @@ async function AddProduct(product, userEmail) {
 		// get mongo connection
 		const mongoClient = await getMongoClient();
 		// define items collection
-		collection_items = mongoClient.db('rentme').collection('items');
+		collection_items = mongoClient.db(process.env.DB_NAME).collection('items');
 
 		const user = await getUserByEmail(userEmail);
 		//add additional data to item
@@ -180,7 +180,7 @@ async function addOrder(order) {
 		// get mongo connection
 		const mongoClient = await getMongoClient();
 		// define orders collection
-		ordersCollection = mongoClient.db('rentme').collection('orders');
+		ordersCollection = mongoClient.db(process.env.DB_NAME).collection('orders');
 
 		// insert new order
 		const result = await ordersCollection.insertOne(order);
@@ -198,7 +198,7 @@ async function updateOrderStatus(orderId, status, userId, userType) {
 		// get mongo connection
 		const mongoClient = await getMongoClient();
 		// define users collection
-		ordersCollection = mongoClient.db('rentme').collection('orders');
+		ordersCollection = mongoClient.db(process.env.DB_NAME).collection('orders');
 
 		await ordersCollection.updateOne({ _id: ObjectID(orderId) }, { $set: { status: status } });
 		console.log(`update order status by: ${userType} to ${status}`);
@@ -214,7 +214,7 @@ async function getOrdersByUserId(userId, userType) {
 		// get mongo connection
 		const mongoClient = await getMongoClient();
 		// define users collection
-		ordersCollection = mongoClient.db('rentme').collection('orders');
+		ordersCollection = mongoClient.db(process.env.DB_NAME).collection('orders');
 
 		// find orders by userId and by type of user request
 		let orders;
@@ -237,7 +237,7 @@ async function getOrdersByItemId(itemID) {
 		// get mongo connection
 		const mongoClient = await getMongoClient();
 		// define users collection
-		ordersCollection = mongoClient.db('rentme').collection('orders');
+		ordersCollection = mongoClient.db(process.env.DB_NAME).collection('orders');
 		// find orders by itemID 
 		orders = await ordersCollection.find({ itemId: itemID }).toArray();
 		return orders;
@@ -251,7 +251,7 @@ async function getItemsByUserId(userId) {
 		// get mongo connection
 		const mongoClient = await getMongoClient();
 		// define items collection
-		itemsCollection = mongoClient.db('rentme').collection('items');
+		itemsCollection = mongoClient.db(process.env.DB_NAME).collection('items');
 
 		const ObjectId = require('mongodb').ObjectID;
 
@@ -267,7 +267,7 @@ async function getItemsByWordSearch(searchWord) {
 	try {
 		const mongoClient = await getMongoClient();
 		// define collection
-		collection_items = mongoClient.db('rentme').collection('items');
+		collection_items = mongoClient.db(process.env.DB_NAME).collection('items');
 		console.log('word search:', searchWord);
 		const items = await collection_items
 			.find({
@@ -288,7 +288,7 @@ async function AddReview(review) {
 		// get mongo connection
 		const mongoClient = await getMongoClient();
 		// define  collection
-		reviewsCollection = mongoClient.db('rentme').collection('reviews');
+		reviewsCollection = mongoClient.db(process.env.DB_NAME).collection('reviews');
 
 		// insert new review
 		const result = await reviewsCollection.insertOne(review);
@@ -306,7 +306,7 @@ async function getReviews(id) {
 		// get mongo connection
 		const mongoClient = await getMongoClient();
 		// define  collection
-		reviewsCollection = mongoClient.db('rentme').collection('reviews');
+		reviewsCollection = mongoClient.db(process.env.DB_NAME).collection('reviews');
 		// find reviews by item id
 		const result = await reviewsCollection.find({ itemID: id }).sort({ createdAt: -1 }).toArray();
 
@@ -322,9 +322,9 @@ async function getFooterData() {
 	try {
 		const mongoClient = await getMongoClient();
 		// define users collection
-		collection_users = await mongoClient.db('rentme').collection('users');
-		collection_orders = await mongoClient.db('rentme').collection('orders');
-		collection_items = await mongoClient.db('rentme').collection('items');
+		collection_users = await mongoClient.db(process.env.DB_NAME).collection('users');
+		collection_orders = await mongoClient.db(process.env.DB_NAME).collection('orders');
+		collection_items = await mongoClient.db(process.env.DB_NAME).collection('items');
 
 		const totalUsers = await collection_users.find({}).count();
 		const totalOrders = await collection_orders.find({ status: 'CONFIRM_ITEM_BY_LESSOR' }).count();

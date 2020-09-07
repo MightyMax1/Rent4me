@@ -12,13 +12,18 @@ let connection = null;
  */
 function getMongoClient() {
 	return new Promise((resolve, reject) => {
-		const url = process.env.MOGODB_URI || 'mongodb://localhost:27017';
+		const uri = "mongodb+srv://MightyMax:Max6565131@cluster0.rqvvw.mongodb.net/rent_it?retryWrites=true&w=majority";
+		const url = process.env.MOGODB_URI || uri;
 
 		if (connection) return resolve(connection);
 
 		MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
-			if (err) return reject(err);
-
+			console.log('mongo url', url);
+			if (err) {
+				console.log('mongo err', err.message);
+				return reject(err);
+			}
+			console.log('suc');
 			connection = client;
 			return resolve(connection);
 		});
