@@ -15,6 +15,7 @@ const STATUSES = {
 router.get('/homePage', async (req, res) => {
 	try {
 		// call db function for get products
+		console.log('get products');
 		const ProductsAndCategories = await db.getProductsAndCategories();
 
 		// return response with products

@@ -7,11 +7,9 @@ async function myFetch(url, method, body) {
 		};
 		options.body = body ? JSON.stringify(body) : undefined;
 
-		let baseUrl = 'localhost:4000';
-		if (process.env.NODE_ENV === 'production') {
-			baseUrl = 'glacial-cliffs-91994.herokuapp.com';
-		}
-		const res = await fetch(`http://${baseUrl}${url}`, options);
+		let baseUrl = '/api';
+
+		const res = await fetch(`${baseUrl}${url}`, options);
 		const data = await res.json();
 		return data;
 	} catch (err) {
@@ -28,7 +26,7 @@ function Api() {
 			return data;
 		},
 
-		getOrdersByItemId: async (itemID) => {
+		getOrdersByItemId: async itemID => {
 			const data = await myFetch(`/products/ordersByItemId?id=${itemID}`);
 			return data;
 		},
@@ -85,9 +83,7 @@ function Api() {
 			return data;
 		},
 
-
 		getMessageByChatId: async id => myFetch(`/messages/chat/${id}`),
-
 
 		getChatsByUserId: async id => await myFetch(`/chats/user/${id}`),
 
@@ -95,7 +91,6 @@ function Api() {
 
 		getLastMessageByChatID: async chatID => await myFetch(`/messages/chatLastMsg/${chatID}`),
 	};
-
 }
 
 const api = Api();

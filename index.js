@@ -33,10 +33,10 @@ app.use(cors());
 app.use(express.json({ limit: '10MB' }));
 
 // register routes
-app.use('/products', productRouter);
-app.use('/chats', chatsRouter);
-app.use('/users', usersRouter);
-app.use('/messages', messagesRouter);
+app.use('/api/products', productRouter);
+app.use('/api/chats', chatsRouter);
+app.use('/api/users', usersRouter);
+app.use('/api/messages', messagesRouter);
 
 // helper functions
 const { getMongoClient, createToken, verifyToken, verifyTokenSync } = require('./helpers');
@@ -61,17 +61,17 @@ async function privateApi(req, res, next) {
 	}
 }
 
-app.get('/footerData', async (req, res) => {
+app.get('/api/footerData', async (req, res) => {
 	try {
 		const footerData = await db.getFooterData();
 		res.json(footerData);
 	} catch (error) {
 		res.json(error.message);
-		console.log(error.message)
+		console.log(error.message);
 	}
-})
+});
 
-app.get('/auth/currentUser', privateApi, async (req, res) => {
+app.get('/api/auth/currentUser', privateApi, async (req, res) => {
 	try {
 		res.json(req.user);
 	} catch (err) {
@@ -80,7 +80,7 @@ app.get('/auth/currentUser', privateApi, async (req, res) => {
 });
 
 // approve order by lessor
-app.post('/orders/approveBooking', privateApi, async (req, res) => {
+app.post('/api/orders/approveBooking', privateApi, async (req, res) => {
 	try {
 		const { orderId, userType } = req.body;
 		//update order status
@@ -94,7 +94,7 @@ app.post('/orders/approveBooking', privateApi, async (req, res) => {
 });
 
 // confirm receving item by lessee/lessor
-app.post('/orders/confirmReceiveItem', privateApi, async (req, res) => {
+app.post('/api/orders/confirmReceiveItem', privateApi, async (req, res) => {
 	try {
 		const { userType, orderId } = req.body;
 
@@ -110,7 +110,7 @@ app.post('/orders/confirmReceiveItem', privateApi, async (req, res) => {
 });
 
 // login route
-app.post('/auth/login', async (req, res) => {
+app.post('/api/auth/login', async (req, res) => {
 	try {
 		// read data from request body
 		const { email, password } = req.body;
@@ -149,7 +149,7 @@ app.post('/auth/login', async (req, res) => {
 });
 
 // sign route
-app.post('/auth/signup', async (req, res) => {
+app.post('/api/auth/signup', async (req, res) => {
 	try {
 		//user details obj
 		const form = req.body;
@@ -212,7 +212,7 @@ ioServer.on('connection', client => {
 		if (!chat) {
 			// if chat not exists create new chat
 			chat = await db.chats.createChat([user._id.toString(), data.receiver._id]);
-			chat = chat.ops[0] // result
+			chat = chat.ops[0]; // result
 		}
 		// create message in db add chat id to message
 		const newMessage = await db.messages.createMessage({
@@ -227,13 +227,13 @@ ioServer.on('connection', client => {
 	});
 });
 
-if (process.env.NODE_ENV === 'production') {
-	app.use(express.static('client/build'));
+// serve static
+app.use(express.static('client/build'));
 
-	app.get('*', (req, res) => {
-		res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
-	})
-}
+app.get('*', (req, res) => {
+	console.log('here');
+	res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+});
 
 // process.env = allow us define variables before run script
 // define server port number
