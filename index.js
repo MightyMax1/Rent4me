@@ -122,7 +122,7 @@ app.post('/api/auth/login', async (req, res) => {
 		const mongoClient = await getMongoClient();
 
 		// define users collection
-		collection = mongoClient.db(DB_NAME).collection('users');
+		collection = mongoClient.db(process.env.DB_NAME).collection('users');
 
 		// find user by email in usres collection
 		const user = await collection.findOne({ email: email });
@@ -160,7 +160,7 @@ app.post('/api/auth/signup', async (req, res) => {
 		form['createdAt'] = Date();
 
 		const mongoClient = await getMongoClient();
-		collection = mongoClient.db(DB_NAME).collection('users');
+		collection = mongoClient.db(process.env.DB_NAME).collection('users');
 		// insert new user to users collection
 		const insertOpr = await collection.insertOne(form);
 
