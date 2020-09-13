@@ -143,7 +143,7 @@ const Item = ({ user }) => {
 				<Col xl={4} md={4}>
 					<Card bg="light">
 						<Card.Header className="text-center">
-							<Image src={lessor.profilepPic} roundedCircle />
+							<Image src={lessor.profilepPic} roundedCircle style={{ 'maxHeight': '300px' }} />
 						</Card.Header>
 						<Card.Body className="text-center">
 							<Card.Title>
@@ -161,12 +161,16 @@ const Item = ({ user }) => {
 					</Card>
 				</Col>
 				<Col xl={8} md={8}>
-					<Carousel activeIndex={index} onSelect={handleSelect}>
+					<Carousel
+						activeIndex={index}
+						onSelect={handleSelect}
+						interval={3000}
+					>
 						{item.images &&
 							item.images.map(img => {
 								return (
 									<Carousel.Item>
-										<img src={img} style={{ maxHeight: '350px', width: '100%' }} />
+										<img src={img} className={'text-center'} style={{ maxHeight: '350px', width: '80%' }} />
 									</Carousel.Item>
 								);
 							})}

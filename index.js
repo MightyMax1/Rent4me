@@ -122,7 +122,7 @@ app.post('/api/auth/login', async (req, res) => {
 		const mongoClient = await getMongoClient();
 
 		// define users collection
-		collection = mongoClient.db('rentme').collection('users');
+		collection = mongoClient.db(process.env.DB_NAME).collection('users');
 
 		// find user by email in usres collection
 		const user = await collection.findOne({ email: email });
@@ -160,7 +160,7 @@ app.post('/api/auth/signup', async (req, res) => {
 		form['createdAt'] = Date();
 
 		const mongoClient = await getMongoClient();
-		collection = mongoClient.db('rentme').collection('users');
+		collection = mongoClient.db(process.env.DB_NAME).collection('users');
 		// insert new user to users collection
 		const insertOpr = await collection.insertOne(form);
 
@@ -200,6 +200,15 @@ ioServer.engine.generateId = req => {
 	}
 };
 
+
+// serve static
+app.use(express.static('client/build'));
+
+app.get('*', (req, res) => {
+	console.log('here');
+	res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+});
+
 // emit / on
 ioServer.on('connection', client => {
 	console.log('new conn', client.id);
@@ -228,14 +237,6 @@ ioServer.on('connection', client => {
 		// send message from server to user(receiver)
 		ioServer.to(data.receiver._id).emit('MESSAGE', { message: data.message, user: user });
 	});
-});
-
-// serve static
-app.use(express.static('client/build'));
-
-app.get('*', (req, res) => {
-	console.log('here');
-	res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
 });
 
 // process.env = allow us define variables before run script

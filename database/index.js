@@ -1,6 +1,6 @@
 const { getMongoClient } = require('../helpers');
 
-const { ObjectID } = require('mongodb');
+const { ObjectID, MongoClient } = require('mongodb');
 
 // collections
 const users = require('./users');
