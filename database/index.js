@@ -67,7 +67,7 @@ async function getProductsAndCategories() {
 		collection_categories = mongoClient.db(process.env.DB_NAME).collection('categories');
 
 		// find all products & categories,
-		const newProducts = await collection_items.find({}).sort({ createdAt: -1 }).limit(4).toArray();
+		const newProducts = await collection_items.find({}).sort({ createdAt: 1 }).limit(4).toArray();
 
 		// toDO.... const trendProducts = ...
 
