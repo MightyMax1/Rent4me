@@ -63,7 +63,7 @@ function App() {
 			// 	baseUrl = 'glacial-cliffs-91994.herokuapp.com';
 			// }
 			// window.socket = io(`https://${baseUrl}?token=${token}`);
-			window.socket = io(`/?token=${token}`);
+			window.socket = io(`?token=${token}`);
 			window.socket.on('connect', () => {
 				console.log('client id', window.socket.id);
 			});
@@ -73,6 +73,8 @@ function App() {
 			});
 
 			const user = await Api.getCurrentUser();
+			console.log('current:', user)
+			console.log('curre111111111nt')
 
 			setUser(user);
 			setLoading(false);

@@ -53,7 +53,7 @@ function MainNavbar({ onLogin, onLogout, user }) {
 			baseUrl = 'glacial-cliffs-91994.herokuapp.com';
 		}
 
-		window.socket = io(`https://${baseUrl}?token=${data.token}`);
+		window.socket = io(`?token=${data.token}`);
 		window.socket.on('connect', () => {
 			console.log('client id', window.socket.id);
 		});
