@@ -1,5 +1,3 @@
-
-
 require('dotenv').config()
 // import core nodejs modules
 const http = require('http');
@@ -7,42 +5,46 @@ const url = require('url');
 // import npm modules
 const express = require('express');
 const mongoClient = require('mongodb');
-const path = require('path');
+const cors = require('cors');
 
+const path = require('path');
 const io = require('socket.io');
 
-const STATUSES = {
-	NEW_BOOKING: 'NEW_BOOKING', //item just added
-	CONFIRM_BOOKING: 'CONFIRM_BOOKING', // after lessor approve
-	CONFIRM_ITEM_BY_LESSEE: 'CONFIRM_ITEM_BY_LESSEE', // after lessee received item
-	CONFIRM_ITEM_BY_LESSOR: 'CONFIRM_ITEM_BY_LESSOR', // order finished (after lessor approve)
-};
 
-const cors = require('cors');
+// helper functions
+const { getMongoClient, verifyToken, createToken, verifyTokenSync } = require('./helpers');
+
+const db = require('./database');
 
 const productRouter = require('./routes/products');
 const chatsRouter = require('./routes/chats');
 const usersRouter = require('./routes/users');
 const messagesRouter = require('./routes/messages');
-
-const db = require('./database');
+const ordersRouter = require('./routes/orders');
 
 // setup express app (handle app routing)
 const app = express();
-
 app.use(cors());
 
 // parse request body (json) middleware
 app.use(express.json({ limit: '10MB' }));
 
 // register routes
+app.use('/api/users', usersRouter);
 app.use('/api/products', productRouter);
 app.use('/api/chats', chatsRouter);
-app.use('/api/users', usersRouter);
 app.use('/api/messages', messagesRouter);
+app.use('/api/orders', ordersRouter);
 
-// helper functions
-const { getMongoClient, createToken, verifyToken, verifyTokenSync } = require('./helpers');
+
+
+//order status
+const STATUSES = {
+	NEW_BOOKING: 'NEW_BOOKING', //item just added
+	CONFIRM_BOOKING: 'CONFIRM_BOOKING', // after lessor approve
+	CONFIRM_ITEM_BY_LESSEE: 'CONFIRM_ITEM_BY_LESSEE', // after lessee received item
+	CONFIRM_ITEM_BY_LESSOR: 'CONFIRM_ITEM_BY_LESSOR', // order finished (after lessor approve)
+};
 
 //middleware that aprove user token and make user obj available
 async function privateApi(req, res, next) {
@@ -51,7 +53,7 @@ async function privateApi(req, res, next) {
 
 		const decoded = await verifyToken(token);
 
-		const user = await db.getUserByEmail(decoded.email);
+		const user = await db.users.getUserByEmail(decoded.email);
 
 		req.user = user;
 
@@ -64,51 +66,11 @@ async function privateApi(req, res, next) {
 	}
 }
 
-app.get('/api/footerData', async (req, res) => {
-	try {
-		const footerData = await db.getFooterData();
-		res.json(footerData);
-	} catch (error) {
-		res.json(error.message);
-		console.log(error.message);
-	}
-});
-
 app.get('/api/auth/currentUser', privateApi, async (req, res) => {
 	try {
 		res.json(req.user);
 	} catch (err) {
 		res.json(null);
-	}
-});
-
-// approve order by lessor
-app.post('/api/orders/approveBooking', privateApi, async (req, res) => {
-	try {
-		const { orderId, userType } = req.body;
-		//update order status
-		//and return all orders from user(lessor)
-		const orders = await db.updateOrderStatus(orderId, STATUSES.CONFIRM_BOOKING, req.user._id.toString(), userType);
-		res.json(orders);
-	} catch (error) {
-		console.log('approveBooking err', err.message);
-		res.json({ err: error.message });
-	}
-});
-
-// confirm receving item by lessee/lessor
-app.post('/api/orders/confirmReceiveItem', privateApi, async (req, res) => {
-	try {
-		const { userType, orderId } = req.body;
-
-		const status = userType == 'lessee' ? STATUSES.CONFIRM_ITEM_BY_LESSEE : STATUSES.CONFIRM_ITEM_BY_LESSOR;
-		//update order status
-		//and return all updated orders to user
-		const orders = await db.updateOrderStatus(orderId, status, req.user._id.toString(), userType);
-		res.json(orders);
-	} catch (error) {
-		console.log('confirmReceiveItem err', err.message);
-		res.json({ err: error.message });
 	}
 });
 
@@ -185,6 +147,19 @@ app.post('/api/auth/signup', async (req, res) => {
 	}
 });
 
+
+app.get('/api/footerData', async (req, res) => {
+	try {
+		const footerData = await db.getFooterData();
+		res.json(footerData);
+	} catch (error) {
+		res.json(error.message);
+		console.log(error.message);
+	}
+});
+
+
+
 // create http server
 const server = http.createServer(app);
 
@@ -205,7 +180,6 @@ ioServer.engine.generateId = req => {
 app.use(express.static('client/build'));
 
 app.get('*', (req, res) => {
-	console.log('here');
 	res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
 });
 
@@ -215,7 +189,7 @@ ioServer.on('connection', client => {
 
 	// on client send message
 	client.on('MESSAGE', async data => {
-		const user = await db.getUserByEmail(data.user.email);
+		const user = await db.users.getUserByEmail(data.user.email);
 
 		let chat = null;
 		// ckeck if chat exits

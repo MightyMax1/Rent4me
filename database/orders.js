@@ -27,13 +27,12 @@ async function updateOrderStatus(orderId, status, userId, userType) {
     try {
         // define order collection
         const ordersCollection = await getCollection();
-
         await ordersCollection.updateOne({ _id: ObjectID(orderId) }, { $set: { status: status } });
         console.log(`update order status by: ${userType} to ${status}`);
         const orders = await getOrdersByUserId(userId, userType);
         return orders;
     } catch (error) {
-        console.log('AddProduct err', err.message);
+        console.log('update order err', err.message);
     }
 }
 

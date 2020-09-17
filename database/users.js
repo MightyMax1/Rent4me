@@ -20,7 +20,8 @@ async function getUserById(id) {
 
 async function getUserByEmail(email) {
 	try {
-		const usersColl = await getCollection();
+
+		const userCollection = await getCollection();
 
 		// find user by email in usres collection
 		const user = await userCollection.findOne({ email: email });

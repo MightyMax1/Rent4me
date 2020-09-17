@@ -28,7 +28,7 @@ async function getChatsByParticipants(participant) {
         // define chat collection
         const chatsCollection = await getCollection();
 
-        const chat = await messagesCollection.find({ participants: { $all: participant } }).toArray();
+        const chat = await chatsCollection.find({ participants: { $all: participant } }).toArray();
 
         return chat;
     } catch (error) {
@@ -43,7 +43,7 @@ async function createChat(participants) {
         const chatsCollection = await getCollection();
 
         // find all products by category id
-        const chat = await messagesCollection.insertOne({ participants });
+        const chat = await chatsCollection.insertOne({ participants });
 
         // find category title by id
 
