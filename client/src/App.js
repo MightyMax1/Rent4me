@@ -58,11 +58,12 @@ function App() {
 			if (!token) {
 				return setLoading(false);
 			}
-			let baseUrl = 'localhost:4000';
-			if (process.env.NODE_ENV === 'production') {
-				baseUrl = 'glacial-cliffs-91994.herokuapp.com';
-			}
-			window.socket = io(`https://${baseUrl}?token=${token}`);
+			// let baseUrl = 'localhost:4000';
+			// if (process.env.NODE_ENV === 'production') {
+			// 	baseUrl = 'glacial-cliffs-91994.herokuapp.com';
+			// }
+			// window.socket = io(`https://${baseUrl}?token=${token}`);
+			window.socket = io(`?token=${token}`);
 			window.socket.on('connect', () => {
 				console.log('client id', window.socket.id);
 			});
@@ -70,14 +71,17 @@ function App() {
 			window.socket.on('MESSAGE', data => {
 				console.log('on Message', data);
 			});
-			const data = await Api.getCurrentUser();
-			if (data.err) {
-				return setLoading(false);
-			}
-			setUser(data);
+
+			const user = await Api.getCurrentUser();
+			console.log('current:', user)
+			console.log('curre111111111nt')
+
+			setUser(user);
 			setLoading(false);
 		}
+
 		getCurrent();
+
 	}, []);
 
 	//loading page effect

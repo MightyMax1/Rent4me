@@ -16,7 +16,7 @@ router.get('/homePage', async (req, res) => {
 	try {
 		// call db function for get products
 		console.log('get products');
-		const ProductsAndCategories = await db.getProductsAndCategories();
+		const ProductsAndCategories = await db.itemsAndCategories.getProductsAndCategories();
 
 		// return response with products
 		res.json(ProductsAndCategories);
@@ -33,7 +33,7 @@ router.get('/category/:id', async (req, res) => {
 	try {
 		const { id } = req.params;
 		// call db function for get products
-		const products = await db.getProductsByCategoryId(id);
+		const products = await db.itemsAndCategories.getProductsByCategoryId(id);
 
 		// return response with products
 		res.json(products);
@@ -65,7 +65,7 @@ router.get('/item/:id', async (req, res) => {
 router.get('/categories', async (req, res) => {
 	try {
 		// call db function for get categories
-		const categories = await db.getCategories();
+		const categories = await db.itemsAndCategories.getCategories();
 
 		// return response with products
 		res.json(categories);
@@ -88,7 +88,7 @@ router.post('/addItem', async (req, res) => {
 		console.log('user', decoded);
 
 		// add product (req.body) object to database
-		const newProduct = await db.AddProduct(req.body, decoded.email);
+		const newProduct = await db.itemsAndCategories.AddProduct(req.body, decoded.email);
 
 		res.json(newProduct);
 	} catch (err) {
@@ -124,7 +124,7 @@ router.post('/orderItem', async (req, res) => {
 				price_day: item.priceDay,
 			},
 		};
-		const newOrder = await db.addOrder(order);
+		const newOrder = await db.orders.addOrder(order);
 
 		res.json(newOrder);
 	} catch (err) {
@@ -140,7 +140,7 @@ router.get('/ordersByUserId', async (req, res) => {
 	try {
 
 		const { id, userType } = req.query;
-		const orders = await db.getOrdersByUserId(id, userType);
+		const orders = await db.orders.getOrdersByUserId(id, userType);
 		res.json(orders);
 	} catch (err) {
 		console.log('get ordersByUserId err: ', err.message);
@@ -155,7 +155,7 @@ router.get('/ordersByItemId', async (req, res) => {
 	try {
 
 		const { id } = req.query;
-		const orders = await db.getOrdersByItemId(id);
+		const orders = await db.orders.getOrdersByItemId(id);
 		res.json(orders);
 	} catch (err) {
 		console.log('get ordersByItemId err: ', err.message);
@@ -170,7 +170,7 @@ router.get('/itemsBySearch', async (req, res) => {
 	try {
 		const { searchWord } = req.query;
 
-		const items = await db.getItemsByWordSearch(searchWord.trim().replace(' ', '|'));
+		const items = await db.itemsAndCategories.getItemsByWordSearch(searchWord.trim().replace(' ', '|'));
 		res.json(items);
 	} catch (err) {
 		console.log('get itemsBySearch err: ', err.message);
@@ -185,7 +185,7 @@ router.get('/getItemsByLessorID', async (req, res) => {
 	try {
 
 		const { id } = req.query;
-		const userItems = await db.getItemsByUserId(id);
+		const userItems = await db.itemsAndCategories.getItemsByUserId(id);
 		res.json(userItems);
 	} catch (err) {
 		console.log('get ItemsByUserId err: ', err.message);
@@ -202,7 +202,7 @@ router.post('/addReview', async (req, res) => {
 		req.body['createdAt'] = Date();
 
 		// add review to db
-		const newReview = await db.AddReview(req.body);
+		const newReview = await db.reviews.AddReview(req.body);
 
 		res.json('success');
 
@@ -217,7 +217,7 @@ router.post('/addReview', async (req, res) => {
 router.get('/getReview', async (req, res) => {
 	try {
 		const { itemID } = req.query;
-		const reviews = await db.getReviews(itemID);
+		const reviews = await db.reviews.getReviews(itemID);
 		res.json(reviews);
 	} catch (err) {
 		console.log('get Review err: ', err.message);

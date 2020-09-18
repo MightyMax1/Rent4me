@@ -18,4 +18,22 @@ async function getUserById(id) {
 	}
 }
 
-module.exports = { getUserById };
+async function getUserByEmail(email) {
+	try {
+
+		const userCollection = await getCollection();
+
+		// find user by email in usres collection
+		const user = await userCollection.findOne({ email: email });
+		return user;
+	} catch (error) {
+		console.log('getUserByEmail err', err.message);
+		return null;
+	}
+}
+
+module.exports = {
+	getUserById,
+	getUserByEmail,
+
+};
