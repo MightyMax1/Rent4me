@@ -1,5 +1,5 @@
 const { getMongoClient } = require('../helpers');
-
+const { getUserByEmail } = require('./users');
 const { ObjectID } = require('mongodb');
 
 async function getItemsCollection() {
@@ -58,7 +58,7 @@ async function getItemsByUserId(userId) {
         const ObjectId = require('mongodb').ObjectID;
 
         // find items owner by userId
-        const items = await itemsCollection.find({ userId: ObjectId(userId) }).toArray();
+        const items = await collection_items.find({ userId: ObjectId(userId) }).toArray();
         return items;
     } catch (error) {
         console.log('getItems err', err.message);
