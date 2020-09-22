@@ -4,13 +4,6 @@ const db = require('../database');
 
 const { verifyToken } = require('../helpers');
 
-const STATUSES = {
-	NEW_BOOKING: 'NEW_BOOKING', //item just added
-	CONFIRM_BOOKING: 'CONFIRM_BOOKING', // after lessor approve
-	CONFIRM_ITEM_BY_LESSEE: 'CONFIRM_ITEM_BY_LESSEE', // after lessee received item
-	CONFIRM_ITEM_BY_LESSOR: 'CONFIRM_ITEM_BY_LESSOR', // order finished (after lessor approve)
-};
-
 // get products
 router.get('/homePage', async (req, res) => {
 	try {
@@ -115,7 +108,7 @@ router.post('/orderItem', async (req, res) => {
 			startRent,
 			endRent,
 			totalPrice,
-			status: STATUSES.NEW_BOOKING,
+			status: global.STATUSES.NEW_BOOKING,
 			createdAt: Date(),
 			itemDetails: {
 				title: item.title,
@@ -138,7 +131,6 @@ router.post('/orderItem', async (req, res) => {
 // get all order by user id and type
 router.get('/ordersByUserId', async (req, res) => {
 	try {
-
 		const { id, userType } = req.query;
 		const orders = await db.orders.getOrdersByUserId(id, userType);
 		res.json(orders);
@@ -153,7 +145,6 @@ router.get('/ordersByUserId', async (req, res) => {
 // get all order by Item id
 router.get('/ordersByItemId', async (req, res) => {
 	try {
-
 		const { id } = req.query;
 		const orders = await db.orders.getOrdersByItemId(id);
 		res.json(orders);
@@ -183,7 +174,6 @@ router.get('/itemsBySearch', async (req, res) => {
 // get all items by user id (lessor)
 router.get('/getItemsByLessorID', async (req, res) => {
 	try {
-
 		const { id } = req.query;
 		const userItems = await db.itemsAndCategories.getItemsByUserId(id);
 		res.json(userItems);
@@ -197,7 +187,6 @@ router.get('/getItemsByLessorID', async (req, res) => {
 
 router.post('/addReview', async (req, res) => {
 	try {
-
 		//add additional data to review
 		req.body['createdAt'] = Date();
 
@@ -205,14 +194,13 @@ router.post('/addReview', async (req, res) => {
 		const newReview = await db.reviews.AddReview(req.body);
 
 		res.json('success');
-
 	} catch (err) {
 		console.log('add review err: ', err.message);
 		res.status(500).json({
 			err: err.message,
 		});
 	}
-})
+});
 
 router.get('/getReview', async (req, res) => {
 	try {
@@ -225,6 +213,6 @@ router.get('/getReview', async (req, res) => {
 			err: err.message,
 		});
 	}
-})
+});
 
 module.exports = router;

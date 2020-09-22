@@ -18,7 +18,7 @@ function getMongoClient() {
 		if (connection) return resolve(connection);
 
 		MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
-			//console.log('mongo url', url);
+			console.log('mongo url', url);
 			if (err) {
 				console.log('mongo err', err.message);
 				return reject(err);
