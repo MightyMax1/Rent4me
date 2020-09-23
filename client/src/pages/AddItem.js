@@ -31,7 +31,7 @@ function AddItem() {
 			const data = await Api.getCategories();
 			if (data.err) {
 				// handle error
-				console.log('getCategories', data.err.msg)
+				console.log('getCategories', data.err.msg);
 			}
 
 			console.log('data', data);
@@ -73,7 +73,7 @@ function AddItem() {
 		const data = await Api.addNewItem(form);
 		if (data.err) {
 			// handle error
-			console.log('getCategories', data.err.msg)
+			console.log('getCategories', data.err.msg);
 		}
 		console.log('data', data);
 
@@ -140,7 +140,7 @@ function AddItem() {
 					</Form.Row>
 					<FormGroup as={Row} className="images">
 						<FormLabel>הוסף תמונות :</FormLabel>
-						<Form.File name="images" multiple required />
+						<Form.File name="images" multiple required accept="image/*;capture=camera" />
 					</FormGroup>
 					<Button type="submit" variant="primary" size="md" block>
 						הוסף מוצר
