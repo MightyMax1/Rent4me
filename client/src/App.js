@@ -35,7 +35,6 @@ function App() {
 	const [user, setUser] = useState(null);
 
 	const [loading, setLoading] = useState(true);
-	const [messages, setMessage] = useState([]);
 
 	const history = useHistory();
 
@@ -63,25 +62,24 @@ function App() {
 			// 	baseUrl = 'glacial-cliffs-91994.herokuapp.com';
 			// }
 			// window.socket = io(`https://${baseUrl}?token=${token}`);
-			window.socket = io(`?token=${token}`);
-			window.socket.on('connect', () => {
-				console.log('client id', window.socket.id);
-			});
 
-			window.socket.on('MESSAGE', data => {
-				console.log('on Message', data);
-			});
+			const url = process.env.NODE_ENV !== 'production' ? 'http://localhost:4000' : '/';
+			if (!window.socket.id) {
+				window.socket = io(`${url}?token=${token}`);
+				window.socket.on('connect', () => {
+					console.log('client id', window.socket.id);
+				});
+			}
 
 			const user = await Api.getCurrentUser();
-			console.log('current:', user)
-			console.log('curre111111111nt')
+			console.log('current:', user);
+			console.log('curre111111111nt');
 
 			setUser(user);
 			setLoading(false);
 		}
 
 		getCurrent();
-
 	}, []);
 
 	//loading page effect
@@ -112,7 +110,7 @@ function App() {
 					</Route>
 
 					{/* lessor section */}
-					<Route exact path='/edit_items'>
+					<Route exact path="/edit_items">
 						<LessorItems user={user} />
 					</Route>
 					<Route exact path="/private/lessor/booking">

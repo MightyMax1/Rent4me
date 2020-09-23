@@ -11,6 +11,7 @@ module.exports = ioServer => {
 			const user = verifyTokenSync(token);
 			return user._id; // custom id must be unique
 		} catch (err) {
+			console.log('generateId err', err.message);
 			return null;
 		}
 	};
@@ -19,7 +20,7 @@ module.exports = ioServer => {
 		console.log('new conn', client.id);
 
 		// on client send message
-		client.on('MESSAGE', async data => {
+		client.on('MESSAGE', async (data, callback) => {
 			const user = await db.users.getUserByEmail(data.user.email);
 
 			let chat = null;
@@ -39,8 +40,12 @@ module.exports = ioServer => {
 				chatId: chat._id,
 			});
 
+			console.log('data.receiver._id', data.receiver._id, typeof data.receiver._id);
 			// send message from server to user(receiver)
-			ioServer.to(data.receiver._id).emit('MESSAGE', { message: data.message, user: user });
+			ioServer.to(data.receiver._id).emit('NEW_MESSAGE', { message: newMessage });
+			if (callback) {
+				callback(newMessage);
+			}
 		});
 	});
 };

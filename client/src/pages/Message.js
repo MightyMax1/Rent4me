@@ -13,22 +13,34 @@ const Message = ({ user }) => {
 	const [message, setMessage] = useState('');
 	const [friendOBJ, setFriend] = useState({});
 
-
+	const onMessageSocket = ({ message }) => {
+		console.log('on Message', message);
+		console.log('aaa', messages);
+		console.log('bb', [...messages, message]);
+		setMessages([...messages, message]);
+	};
 
 	useEffect(() => {
 		async function getAllMessages() {
 			const data = await Api.getMessageByChatId(id);
 			console.log('data', data);
 			setMessages(data);
+			if (!data[0]) return;
 
-			const friendID = (data[0].sender._id != user._id) ? data[0].sender._id : data[0].receiver._id;
+			const friendID = data[0].sender._id != user._id ? data[0].sender._id : data[0].receiver._id;
 			const friendObj = await Api.getUserById(friendID);
 			setFriend(friendObj);
-
 		}
 
 		getAllMessages();
 	}, []);
+
+	useEffect(() => {
+		window.socket.on('NEW_MESSAGE', onMessageSocket);
+		return () => {
+			window.socket.off('NEW_MESSAGE', onMessageSocket);
+		};
+	}, [messages]);
 
 	const onMessage = e => {
 		const { value } = e.target;
@@ -38,9 +50,13 @@ const Message = ({ user }) => {
 	const sendMessage = e => {
 		e.preventDefault();
 		// send message to server with socket
-		window.socket.emit('MESSAGE', { user, message, receiver: friendOBJ });
+		window.socket.emit('MESSAGE', { user, message, receiver: friendOBJ }, newMessage => {
+			setMessages([...messages, newMessage]);
+		});
 		document.getElementById('textAreaMSG').value = '';
 	};
+
+	console.log('messages', messages);
 
 	return (
 		<Container>
@@ -48,9 +64,9 @@ const Message = ({ user }) => {
 			<Jumbotron>
 				{messages.map(messageObj => {
 					return (
-						<Card className='bm-5' xl={8} className="mt-2" message={messageObj._id}>
+						<Card className="bm-5" xl={8} className="mt-2" message={messageObj._id}>
 							<Card.Header as={Row} className="" dir="rtl">
-								<Col md={{ span: 1, offset: 1 }} sm={3} xs={10} >
+								<Col md={{ span: 1, offset: 1 }} sm={3} xs={10}>
 									<Image style={{ height: '85px', width: '85px' }} src={messageObj.sender.profilepPic} roundedCircle />
 								</Col>
 								<Col md={8} sm={8} xs={8} className="pt-3 text-right">
@@ -58,30 +74,34 @@ const Message = ({ user }) => {
 								</Col>
 							</Card.Header>
 							<Card.Body className="text-right">
-								<p >{messageObj.message.text}</p>
+								<p>{messageObj.message.text}</p>
 							</Card.Body>
 							<Card.Footer className="text-right">{format(messageObj.message.date, 'dd-MM-yyyy HH:mm')}</Card.Footer>
 						</Card>
 					);
 				})}
-				<Form className='mt-3' dir='rtl'>
-					<h3 className='text-center'>
-						שלח הודעה
-					</h3>
+				<Form className="mt-3" dir="rtl">
+					<h3 className="text-center">שלח הודעה</h3>
 					<Row>
-						<Col xl='12'>
-							<Form.Control as="textarea" rows="3" id="textAreaMSG" name="message" onChange={onMessage} placeholder='רשום הודעה כאן' />
+						<Col xl="12">
+							<Form.Control
+								as="textarea"
+								rows="3"
+								id="textAreaMSG"
+								name="message"
+								onChange={onMessage}
+								placeholder="רשום הודעה כאן"
+							/>
 						</Col>
-						<Col className='mt-3 ' xl='3' >
-							<Button variant="primary" onClick={sendMessage} block >
+						<Col className="mt-3 " xl="3">
+							<Button variant="primary" onClick={sendMessage} block>
 								שלח
 							</Button>
 						</Col>
 					</Row>
-
 				</Form>
 			</Jumbotron>
-		</Container >
+		</Container>
 	);
 };
 

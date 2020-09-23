@@ -1,3 +1,7 @@
+const { verifyToken } = require('../helpers');
+
+const db = require('../database')
+
 //middleware that aprove user token and make user obj available
 async function privateApi(req, res, next) {
 	try {
