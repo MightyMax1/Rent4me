@@ -140,7 +140,7 @@ function AddItem() {
 					</Form.Row>
 					<FormGroup as={Row} className="images">
 						<FormLabel>הוסף תמונות :</FormLabel>
-						<Form.File name="images" multiple required accept="image/*;capture=camera" />
+						<Form.File name="images" multiple required accept="image/*" capture="camera" />
 					</FormGroup>
 					<Button type="submit" variant="primary" size="md" block>
 						הוסף מוצר

@@ -29,7 +29,7 @@ router.post('/login', async (req, res) => {
 		// find user by email in usres collection
 		const user = await collection.findOne({ email: email });
 
-		console.log(email, 'user', user);
+
 
 		// if user not exists or passport invalid => return error message
 		if (!user || user.password !== password) {

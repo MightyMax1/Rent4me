@@ -46,7 +46,11 @@ function MainNavbar({ onLogin, onLogout, user }) {
 
 		// call login api
 		const data = await Api.login(form);
-		localStorage.setItem('token', data.token);
+		console.log("login data:", data)
+		if (data.err) {
+			return;
+		}
+
 
 		let baseUrl = 'localhost:4000';
 		if (process.env.NODE_ENV === 'production') {

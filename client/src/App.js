@@ -57,14 +57,10 @@ function App() {
 			if (!token) {
 				return setLoading(false);
 			}
-			// let baseUrl = 'localhost:4000';
-			// if (process.env.NODE_ENV === 'production') {
-			// 	baseUrl = 'glacial-cliffs-91994.herokuapp.com';
-			// }
-			// window.socket = io(`https://${baseUrl}?token=${token}`);
 
 			const url = process.env.NODE_ENV !== 'production' ? 'http://localhost:4000' : '/';
-			if (!window.socket.id) {
+
+			if (typeof window.socket == "undefined") {
 				window.socket = io(`${url}?token=${token}`);
 				window.socket.on('connect', () => {
 					console.log('client id', window.socket.id);
