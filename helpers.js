@@ -12,7 +12,7 @@ let connection = null;
  */
 function getMongoClient() {
 	return new Promise((resolve, reject) => {
-		const uri = "mongodb+srv://MightyMax:Max6565131@cluster0.rqvvw.mongodb.net/rent_it?retryWrites=true&w=majority";
+		const uri = null; //replace with uri on production
 		const url = process.env.MOGODB_URI || uri;
 
 		if (connection) return resolve(connection);
